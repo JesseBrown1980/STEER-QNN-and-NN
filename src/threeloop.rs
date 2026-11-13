@@ -18,6 +18,14 @@ pub enum Kind {
     /// one adaptive value per bit position within the byte, this rate
     NoSensor(u32),
     Nothing,
+    /// the inner layer cut to a density (None = NORMAL, Some(d) = index into DENS), no learning
+    Static(Option<usize>),
+    /// starts from that density (None = NORMAL; `empty` = no inner entries at all) and learns with this rate
+    Growing {
+        start: Option<usize>,
+        empty: bool,
+        rate: u32,
+    },
 }
 
 #[derive(Clone)]
@@ -31,7 +39,13 @@ pub struct Result {
     pub bytes: Vec<i64>,
     pub own_inner: Vec<u64>,
     pub overlay: Vec<usize>,
+    /// bytes of each of `SEGMENTS` equal parts of the text, per arm
+    pub segment_bytes: Vec<Vec<i64>>,
+    /// learned entries at the end of each segment, per arm
+    pub segment_overlay: Vec<Vec<usize>>,
 }
+
+pub const SEGMENTS: usize = 9;
 
 struct State {
     sum: Vec<i64>,
@@ -41,6 +55,9 @@ struct State {
     order0: Vec<u16>,
     total: i64,
     on_mid: u64,
+    seg: Vec<i64>,
+    seg_overlay: Vec<usize>,
+    seen: i64,
 }
 
 fn toward(p: u16, bit: u8, r: u32) -> u16 {
@@ -73,6 +90,9 @@ pub fn run(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Arm]) 
             order0: vec![2048; 256],
             total: 0,
             on_mid: 0,
+            seg: vec![0; SEGMENTS],
+            seg_overlay: vec![0; SEGMENTS],
+            seen: 0,
         })
         .collect();
     let mut a_sum = vec![0i64; fan];
@@ -144,8 +164,17 @@ pub fn run(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Arm]) 
                         s.overlay.insert(key, toward(p, bits[q], r));
                     }
                 }
-                Kind::NoCorrection | Kind::ThreeLoops(_) => {
-                    let learning = matches!(arm.kind, Kind::ThreeLoops(_));
+                Kind::NoCorrection
+                | Kind::ThreeLoops(_)
+                | Kind::Static(_)
+                | Kind::Growing { .. } => {
+                    let learning = matches!(arm.kind, Kind::ThreeLoops(_) | Kind::Growing { .. });
+                    // which trained entries exist for this arm: all, those above a density threshold, or none
+                    let (cut, empty) = match arm.kind {
+                        Kind::Static(d) => (d, false),
+                        Kind::Growing { start, empty, .. } => (start, empty),
+                        _ => (None, false),
+                    };
                     let pick = argmin(&s.sum);
                     for k in 0..fan {
                         let id = cur_t * fan + k;
@@ -153,7 +182,10 @@ pub fn run(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Arm]) 
                         let mut ck = 0;
                         for q in 0..8 {
                             let e = k * 8 + q;
-                            let stored = mpos[e].map(|p| t.vals[p]);
+                            let th = cut.map_or(0, |d| sur.thr[d][1][id]);
+                            let stored = mpos[e]
+                                .filter(|&p| !empty && u64::from(t.rank[p]) >= th)
+                                .map(|p| t.vals[p]);
                             let pv = if learning {
                                 let key = ((id as u64) << 32) | u64::from(idx[q]);
                                 s.overlay.get(&key).copied().or(stored).unwrap_or(ptop[q])
@@ -190,6 +222,14 @@ pub fn run(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Arm]) 
                             s.overlay.insert(key, toward(pv_all[e], bits[q], r));
                         }
                     }
+                    if let Kind::Growing { rate, .. } = arm.kind {
+                        let id = cur_t * fan + pick;
+                        for q in 0..8 {
+                            let e = pick * 8 + q;
+                            let key = ((id as u64) << 32) | u64::from(idx[q]);
+                            s.overlay.insert(key, toward(pv_all[e], bits[q], rate));
+                        }
+                    }
                     let w = s.age % WINDOW;
                     for k in 0..fan {
                         let h = k * WINDOW + w;
@@ -198,6 +238,16 @@ pub fn run(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Arm]) 
                     }
                     s.age += 1;
                 }
+            }
+        }
+        let seg = (i * SEGMENTS / mix.len()).min(SEGMENTS - 1);
+        let seg_end =
+            i + 1 == mix.len() || ((i + 1) * SEGMENTS / mix.len()).min(SEGMENTS - 1) != seg;
+        for s in &mut st {
+            s.seg[seg] += s.total - s.seen;
+            s.seen = s.total;
+            if seg_end {
+                s.seg_overlay[seg] = s.overlay.len();
             }
         }
         let w = i % WINDOW;
@@ -213,6 +263,11 @@ pub fn run(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Arm]) 
         bytes: st.iter().map(|s| (s.total + 1024) / 2048).collect(),
         own_inner: st.iter().map(|s| s.on_mid).collect(),
         overlay: st.iter().map(|s| s.overlay.len()).collect(),
+        segment_bytes: st
+            .iter()
+            .map(|s| s.seg.iter().map(|&v| (v + 1024) / 2048).collect())
+            .collect(),
+        segment_overlay: st.iter().map(|s| s.seg_overlay.clone()).collect(),
     }
 }
 
@@ -231,6 +286,28 @@ pub fn arms() -> Vec<Arm> {
         mk("NO_MEMORY", Kind::NoMemory(4)),
         mk("NO_SENSOR", Kind::NoSensor(4)),
         mk("NOTHING", Kind::Nothing),
+    ]
+}
+
+/// The seven arms of the growth panel (V53), STATIC_NORMAL first.
+pub fn growth_arms() -> Vec<Arm> {
+    let mk = |name: &str, kind: Kind| Arm {
+        name: name.to_string(),
+        kind,
+    };
+    let grow = |start: Option<usize>, empty: bool| Kind::Growing {
+        start,
+        empty,
+        rate: 4,
+    };
+    vec![
+        mk("STATIC_NORMAL", Kind::Static(None)),
+        mk("STATIC_NEUTRON_STAR", Kind::Static(Some(3))),
+        mk("STATIC_BLACK_HOLE", Kind::Static(Some(5))),
+        mk("GROW_FROM_NORMAL", grow(None, false)),
+        mk("GROW_FROM_NEUTRON_STAR", grow(Some(3), false)),
+        mk("GROW_FROM_BLACK_HOLE", grow(Some(5), false)),
+        mk("GROW_FROM_NOTHING", grow(None, true)),
     ]
 }
 
@@ -310,6 +387,18 @@ mod tests {
         assert!(r.overlay[1] > 0 && r.overlay[5] > 0);
         // on this very repetitive text the corrected network does at least as well as the fixed one
         assert!(r.bytes[3] <= r.bytes[0]);
+        // growth arms: STATIC_NORMAL is the fixed network; growing from NORMAL at rate 4 is THREE_LOOPS_UNIFORM_4;
+        // the segments add up to the total
+        let g = run(&net, &sur, (&ids, &bytes), &growth_arms());
+        assert_eq!(g.bytes[0], base);
+        assert_eq!(g.bytes[3], r.bytes[3]);
+        assert_eq!(g.overlay[0] + g.overlay[1] + g.overlay[2], 0);
+        assert!(g.overlay[6] > 0);
+        for x in 0..7 {
+            let sum: i64 = g.segment_bytes[x].iter().sum();
+            assert!((sum - g.bytes[x]).abs() <= SEGMENTS as i64);
+            assert_eq!(g.segment_overlay[x][SEGMENTS - 1], g.overlay[x]);
+        }
         let again = run(&net, &sur, (&ids, &bytes), &a);
         assert_eq!(r.bytes, again.bytes);
     }
