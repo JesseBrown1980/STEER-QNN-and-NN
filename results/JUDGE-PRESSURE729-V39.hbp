@@ -1,0 +1,10 @@
+JUDGE|spec=SPEC-PRESSURE729-V39.hbp|result=RESULT-PRESSURE729-V39.hbp|date=2026-11-13|tag=MEASURED|json=0
+JUDGE|Q1_EQUAL_smaller_than_RANDOM_at_every_density=MET_(6_of_6,_both_fallbacks)|json=0
+JUDGE|Q2_PARENT_smaller_than_FLAT_at_every_density_and_rule=MET_(30_of_30)|json=0
+JUDGE|Q3_OPEN<=SEALED<=EQUAL_with_PARENT=MET_at_5_of_6_densities;_MISSED_at_1/2_(OPEN_1082275_above_SEALED_1081818)|json=0
+JUDGE|Q4_best_at_1/2_within_20_permille_of_baseline=MET_(992)|Q4_best_at_1/16_more_than_100_permille_above=MISSED_(1008:_the_cut_to_1/16_costs_8_permille)|json=0
+JUDGE|Q5_INVERSE_largest_at_every_density=MET_with_FLAT;_with_PARENT_MISSED_at_1/64_and_1/256_(RANDOM_slightly_larger)|json=0
+JUDGE|Q6_hourglass_rises_to_BLACK_HOLE_and_returns_within_5_permille=MET_(1083359,_1084984,_1092592,_1105462,_1094042,_1084235)|json=0
+JUDGE|Q7_OUTWARD_end_within_5_permille_of_single_NORMAL_PARENT=MET_(1084460_against_1083359)|json=0
+JUDGE|Q8_own-table_share_of_BLACK_HOLE_below_half_of_NORMAL=MET_(134_and_187_against_376)|json=0
+JUDGE|headline=weight_is_concentrated:_the_top_1/16_of_entries_hold_902_permille_of_the_weight,_the_top_1/256_hold_342;_median_weight_5|with_OPEN_flow_and_PARENT_fallback_the_cost_over_the_full_network_is_-1_permille_at_1/4,_+2_at_1/8,_+14_at_1/16,_+71_at_1/64,_+124_at_1/256|json=0
