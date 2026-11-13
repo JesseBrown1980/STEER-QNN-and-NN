@@ -86,6 +86,8 @@ pub struct Outcome {
     pub bytes: Vec<i64>,
     pub own_inner: Vec<u64>,
     pub total_bytes: usize,
+    /// bytes for which the box switch was in the block's own box
+    pub own_box: u64,
     /// per variant: (table << 32 | entry) -> (total harm, uses); filled only when asked
     pub harm: Vec<HashMap<u64, (i64, u32)>>,
 }
@@ -110,6 +112,18 @@ pub fn split(net: &Network, rem: usize) -> (Vec<usize>, Vec<u8>) {
             ids.push(j);
             bytes.extend_from_slice(&net.all_tails[j * tail..(j + 1) * tail]);
         }
+    }
+    (ids, bytes)
+}
+
+/// The same tails in an order fixed by a hash of the block number, so that neighbours are unrelated.
+pub fn split_shuffled(net: &Network, rem: usize) -> (Vec<usize>, Vec<u8>) {
+    let tail = net.cfg.tail;
+    let (mut ids, _) = split(net, rem);
+    ids.sort_unstable_by_key(|&j| (h16(j as u32 ^ 0x2545_f491), j));
+    let mut bytes = Vec::with_capacity(ids.len() * tail);
+    for &j in &ids {
+        bytes.extend_from_slice(&net.all_tails[j * tail..(j + 1) * tail]);
     }
     (ids, bytes)
 }
@@ -161,6 +175,36 @@ pub fn run(
     collect_harm: bool,
     box_window: usize,
 ) -> Outcome {
+    let (ids, mix) = split(net, rem);
+    run_text(
+        net,
+        sur,
+        (&ids, &mix),
+        variants,
+        excise,
+        fused,
+        collect_harm,
+        box_window,
+    )
+}
+
+/// The same on a given text: `text.0[i]` is the block of the i-th tail of `text.1`.
+#[allow(
+    clippy::too_many_lines,
+    clippy::needless_range_loop,
+    clippy::too_many_arguments
+)]
+pub fn run_text(
+    net: &Network,
+    sur: &Surgery,
+    text: (&[usize], &[u8]),
+    variants: &[Variant],
+    excise: &[EntrySet],
+    fused: &[Vec<bool>],
+    collect_harm: bool,
+    box_window: usize,
+) -> Outcome {
+    let (ids, mix) = text;
     let fan = net.cfg.fan;
     let tail = net.cfg.tail;
     let cost = cost_table();
@@ -171,7 +215,6 @@ pub fn run(
             cost[4096 - p as usize]
         }
     };
-    let (ids, mix) = split(net, rem);
     let mut st: Vec<State> = variants
         .iter()
         .map(|v| State {
@@ -197,6 +240,7 @@ pub fn run(
     let mut harm: Vec<HashMap<u64, (i64, u32)>> = variants.iter().map(|_| HashMap::new()).collect();
     let (mut c1, mut c2) = (0usize, 0usize);
     let mut cur_t = usize::MAX;
+    let mut own_box = 0u64;
     for (i, &b) in mix.iter().enumerate() {
         let own = ids[i / tail];
         let (own_m, own_t) = (own / fan, own / (fan * fan));
@@ -218,6 +262,7 @@ pub fn run(
                 s.current = usize::MAX;
             }
         }
+        own_box += u64::from(cur_t == own_t);
         for j in 0..fan {
             let t = &net.tops[j];
             let mut cj = 0;
@@ -369,6 +414,7 @@ pub fn run(
         bytes: st.iter().map(|s| (s.total + 1024) / 2048).collect(),
         own_inner: st.iter().map(|s| s.on_mid).collect(),
         total_bytes: mix.len(),
+        own_box,
         harm,
     }
 }
@@ -552,6 +598,25 @@ mod tests {
         assert_eq!(net.all_tails.len(), 27 * 500);
         let (ids, bytes) = split(&net, 2);
         assert_eq!((ids.len(), bytes.len()), (3, 1500));
+        // the shuffled split holds the same tails in another order, and the same text gives the same result
+        let (mut sids, sbytes) = split_shuffled(&net, 2);
+        assert_eq!(sbytes.len(), bytes.len());
+        assert_ne!(sids, ids);
+        sids.sort_unstable();
+        assert_eq!(sids, ids);
+        let direct = run(&net, &sur, 2, &[Variant::base("BASE")], &[], &[], false, 64);
+        let via_text = run_text(
+            &net,
+            &sur,
+            (&ids, &bytes),
+            &[Variant::base("BASE")],
+            &[],
+            &[],
+            false,
+            64,
+        );
+        assert_eq!(direct.bytes, via_text.bytes);
+        assert!(direct.own_box as usize <= direct.total_bytes);
         let g = guides();
         assert_eq!(g.len(), 15);
         let exam = run(&net, &sur, 2, &g, &[], &[], true, 64);
