@@ -7,6 +7,7 @@
 pub mod bigint;
 pub mod lazy;
 pub mod loops;
+pub mod mature;
 pub mod neuron;
 pub mod pressure_boxes;
 pub mod reading;
