@@ -80,7 +80,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // ---- exam: diagnosis under BASE, and the 15 guides
     let g = guides();
-    let exam = run(&net, &sur, EXAM, &g, &[], &[], true);
+    let exam = run(&net, &sur, EXAM, &g, &[], &[], true, 64);
     for row in rows("EXAM", EXAM, &g, &exam) {
         println!("{row}");
     }
@@ -136,7 +136,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         ("VERDICT_1", VERDICT[0]),
         ("VERDICT_2", VERDICT[1]),
     ] {
-        let out = run(&net, &sur, rem, &vs, &ex_sets, &fuse_sets, false);
+        let out = run(&net, &sur, rem, &vs, &ex_sets, &fuse_sets, false, 64);
         for row in rows(name, rem, &vs, &out) {
             println!("{row}");
         }

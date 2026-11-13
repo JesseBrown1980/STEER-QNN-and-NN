@@ -26,6 +26,10 @@ pub struct Variant {
     /// index into the fusion sets
     pub fused: Option<usize>,
     pub oracle: bool,
+    /// answer with round((c*p + k*q)/(c+k)): c the entry's weight, q the box value
+    pub blend: Option<u64>,
+    /// remove an entry whose weight is at most .0 and whose value is at least .1 from the box value
+    pub rule: Option<(u64, u16)>,
 }
 
 impl Variant {
@@ -39,6 +43,8 @@ impl Variant {
             excise: None,
             fused: None,
             oracle: false,
+            blend: None,
+            rule: None,
         }
     }
 }
@@ -136,7 +142,11 @@ pub fn redundancy_order(red: &[(u128, u128)]) -> Vec<usize> {
     order
 }
 
-#[allow(clippy::too_many_lines, clippy::needless_range_loop)]
+#[allow(
+    clippy::too_many_lines,
+    clippy::needless_range_loop,
+    clippy::too_many_arguments
+)]
 pub fn run(
     net: &Network,
     sur: &Surgery,
@@ -145,6 +155,7 @@ pub fn run(
     excise: &[EntrySet],
     fused: &[Vec<bool>],
     collect_harm: bool,
+    box_window: usize,
 ) -> Outcome {
     let fan = net.cfg.fan;
     let tail = net.cfg.tail;
@@ -169,7 +180,7 @@ pub fn run(
         })
         .collect();
     let mut a_sum = vec![0i64; fan];
-    let mut a_hist = vec![0i32; fan * 64];
+    let mut a_hist = vec![0i32; fan * box_window];
     let (mut idx, mut bits) = ([0u32; 8], [0u8; 8]);
     let mut acost = vec![0i32; fan];
     let mut ptop = vec![2048u16; fan * 8];
@@ -259,7 +270,8 @@ pub fn run(
                 s.on_mid += 1;
                 continue;
             }
-            let plain = v.excise.is_none() && v.fused.is_none();
+            let plain =
+                v.excise.is_none() && v.fused.is_none() && v.blend.is_none() && v.rule.is_none();
             let answer: &[i32] = if plain {
                 &level_cost[v.answer * fan..(v.answer + 1) * fan]
             } else {
@@ -271,11 +283,24 @@ pub fn run(
                     let mut ck = 0;
                     for q in 0..8 {
                         let e = k * 8 + q;
+                        let qv = ptop[cur_t * 8 + q];
+                        let weight = mrank[e] >> 16;
                         let keep = !gone
                             && mhas[e]
                             && mrank[e] >= th
-                            && !v.excise.is_some_and(|x| excise[x].has(id, mpos[e]));
-                        let pv = if keep { mval[e] } else { ptop[cur_t * 8 + q] };
+                            && !v.excise.is_some_and(|x| excise[x].has(id, mpos[e]))
+                            && !v
+                                .rule
+                                .is_some_and(|(c, d)| weight <= c && mval[e].abs_diff(qv) >= d);
+                        let pv = if !keep {
+                            qv
+                        } else if let Some(kb) = v.blend {
+                            let den = weight + kb;
+                            ((weight * u64::from(mval[e]) + kb * u64::from(qv) + den / 2) / den)
+                                .clamp(1, 4095) as u16
+                        } else {
+                            mval[e]
+                        };
                         ck += bc(pv, bits[q]);
                     }
                     own_cost[k] = ck;
@@ -317,10 +342,10 @@ pub fn run(
             }
             s.age += 1;
         }
-        let w = i % 64;
+        let w = i % box_window;
         for j in 0..fan {
-            a_sum[j] += i64::from(acost[j] - a_hist[j * 64 + w]);
-            a_hist[j * 64 + w] = acost[j];
+            a_sum[j] += i64::from(acost[j] - a_hist[j * box_window + w]);
+            a_hist[j * box_window + w] = acost[j];
         }
         c2 = c1;
         c1 = b as usize;
@@ -514,7 +539,7 @@ mod tests {
         assert_eq!((ids.len(), bytes.len()), (3, 1500));
         let g = guides();
         assert_eq!(g.len(), 15);
-        let exam = run(&net, &sur, 2, &g, &[], &[], true);
+        let exam = run(&net, &sur, 2, &g, &[], &[], true, 64);
         assert!(!exam.harm.is_empty());
         let (sets, names) = excision_sets(&net, &exam.harm, &[5]);
         assert_eq!(names.len(), 5);
@@ -544,12 +569,12 @@ mod tests {
             oracle,
         ];
         let both = [none[0].clone(), vec![true; 9]];
-        let out = run(&net, &sur, 5, &vs, &empty, &both, false);
+        let out = run(&net, &sur, 5, &vs, &empty, &both, false, 64);
         assert_eq!(out.bytes[0], out.bytes[1]);
         assert_eq!(out.bytes[0], out.bytes[2]);
         assert_eq!(out.bytes[4], out.bytes[5]);
         // every table fused: the answer is the box table whatever is picked
-        let box_only = run(&net, &sur, 5, &vs[3..4], &empty, &both, false);
+        let box_only = run(&net, &sur, 5, &vs[3..4], &empty, &both, false, 64);
         assert_eq!(out.bytes[3], box_only.bytes[0]);
         assert_eq!(out.own_inner[6] as usize, out.total_bytes);
         // the most harmful entries, removed, do not hurt on the split they were found on
@@ -563,8 +588,30 @@ mod tests {
             &sets,
             &[],
             false,
+            64,
         );
         assert!(again.bytes[1] <= again.bytes[0]);
+        // a blend with k = 0 and a rule that no weight can meet both leave BASE unchanged;
+        // a rule that removes everything answers like the box table alone
+        let mut b0 = Variant::base("B0");
+        b0.blend = Some(0);
+        let mut r0 = Variant::base("R0");
+        r0.rule = Some((0, 0));
+        let mut rall = Variant::base("RALL");
+        rall.rule = Some((u64::MAX, 0));
+        let edits = run(
+            &net,
+            &sur,
+            5,
+            &[Variant::base("BASE"), b0, r0, rall],
+            &[],
+            &[],
+            false,
+            64,
+        );
+        assert_eq!(edits.bytes[0], edits.bytes[1]);
+        assert_eq!(edits.bytes[0], edits.bytes[2]);
+        assert_eq!(edits.bytes[3], box_only.bytes[0]);
         let order = redundancy_order(&redundancy(&net));
         let (fs, fnames) = fusion_sets(&order, &[3]);
         assert_eq!((fs.len(), fnames.len()), (3, 3));
