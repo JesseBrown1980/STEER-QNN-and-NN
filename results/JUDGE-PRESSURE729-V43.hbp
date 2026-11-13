@@ -1,0 +1,8 @@
+JUDGE43|spec=specs/SPEC-PRESSURE729-V43-UNSEEN-BLOCKS.hbp|result=results/RESULT-PRESSURE729-V43-UNSEEN.hbp|date=2026-11-13|program=commit_31a7821|blocks_left_out_of_training=2187_(j_mod_9=0)|inner_entries=70449690_(75696165_with_all_blocks)|outcome=CARRIES_TO_UNSEEN_BLOCKS_(U2_to_U5_hold)|tag=MEASURED|json=0
+JUDGE43|U1_full_network_between_1150000_and_1750000_bytes=MISSED:_1091735,_which_is_+0.1_percent_against_the_mean_1090622_of_the_seen-block_splits|the_tails_of_blocks_the_tables_never_saw_code_as_well_as_the_tails_of_blocks_they_were_trained_on|json=0
+JUDGE43|U2_density_curve_OPEN_with_PARENT=MET:_1/8:+2.4_permille,_1/16:+14.6,_1/256:+120.3_(seen_blocks:_+2.0_to_+2.8,_+13.9_to_+14.5,_+117.6_to_+123.6)|json=0
+JUDGE43|U3_EQUAL_below_RANDOM_at_all_6_densities_with_both_fallbacks,_PARENT_below_FLAT_in_all_30_cut_arms=MET|json=0
+JUDGE43|U4_free_hourglass=MET:_1091735,1093173,1101521,1114197,1103201,1092544;_end_+0.7_permille_against_the_first_layer|json=0
+JUDGE43|U5_STEER-1_hourglass=MET:_1091735,1091735,1092468,1093434,1235980,1137409;_BLACK_HOLE_below_its_free_value;_the_layer_after_it_+120_permille;_end_+41_permille_against_the_free_end|json=0
+JUDGE43|U6_own_box_share_below_700_permille=MISSED:_727_(730_on_seen_blocks)|own_inner_table_share_334_against_376_on_seen_blocks|json=0
+JUDGE43|reading=the_earlier_numbers_did_not_depend_on_having_trained_on_the_same_blocks;_what_drops_is_only_how_often_the_switch_lands_on_the_block's_own_inner_table|scope=unseen_blocks_of_the_same_stream;_neighbouring_blocks_often_come_from_the_same_folders;_not_another_corpus|json=0
