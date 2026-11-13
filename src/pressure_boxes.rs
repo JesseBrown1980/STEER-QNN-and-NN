@@ -63,7 +63,7 @@ pub fn h16(k: u32) -> u32 {
     x & 65535
 }
 
-fn round_div(num: u128, den: u128) -> u128 {
+pub fn round_div(num: u128, den: u128) -> u128 {
     if den == 0 {
         0
     } else {
@@ -132,6 +132,8 @@ pub struct Network {
     pub mids: Vec<Table>,
     pub tail_ids: Vec<usize>,
     pub held_out: Vec<u8>,
+    /// the held-out tail of every block, in block order (any split can be cut from it)
+    pub all_tails: Vec<u8>,
 }
 
 /// One pass over the stream: the box tables, the inner tables and the held-out tails.
@@ -154,10 +156,12 @@ pub fn build(cfg: Config, src: &mut dyn Source) -> Result<Network, String> {
         mids: Vec::new(),
         tail_ids: Vec::new(),
         held_out: Vec::new(),
+        all_tails: Vec::new(),
     };
     for j in 0..nl {
         src.read_block(j, &mut buf)?;
         cnt.count(&buf[..ntr]);
+        net.all_tails.extend_from_slice(&buf[ntr..]);
         if j % cfg.tail_mod == cfg.tail_rem {
             net.tail_ids.push(j);
             net.held_out.extend_from_slice(&buf[ntr..]);
@@ -356,7 +360,7 @@ fn layer_name(d: Option<usize>) -> &'static str {
     }
 }
 
-fn argmin(sum: &[i64]) -> usize {
+pub fn argmin(sum: &[i64]) -> usize {
     let mut best = 0;
     for (k, &s) in sum.iter().enumerate() {
         if s < sum[best] {
@@ -374,7 +378,7 @@ fn cheapest(sum: &[i64], k: usize, out: &mut Vec<usize>) {
     out.truncate(k);
 }
 
-fn find(t: &Table, key: u32) -> Option<usize> {
+pub fn find(t: &Table, key: u32) -> Option<usize> {
     t.keys.binary_search(&key).ok()
 }
 
