@@ -1,147 +1,161 @@
-# STEER: pressure boxes and steered layer stacks on a table network
+# STEER: density, steering and surgery on a table network
 
-**Status, November 13, 2026: MEASURED on one stream and one split, integer Rust, predictions sealed
-before each run. Not yet reviewed by a second seat. A first literature search was made; it is not a
-priority audit.**
+**Status, November 13, 2026.** Twelve panels are measured and judged, five more are sealed and
+running or queued. Everything is integer Rust 1.81. Every panel's predictions were committed
+before its program ran, and every judgement lists the misses. One stream, one kind of network,
+no second-seat review yet, and only a first literature search: this is an original framework with
+early measurements, not a claimed discovery.
+
+## What this is
 
 A network of 729 small prediction tables, trained on 2.69 GB of Asolaria material, is edited
-directly (no training loop) and tested on 4,478,976 bytes of held-out text. The score is how small
-the held-out text codes: fewer bytes is better. Three questions:
+directly (no training loop) and tested on held-out text. The score is how small the held-out text
+codes: fewer bytes is better. The questions:
 
-1. How concentrated is the weight, and how hard can the network be cut?
-2. Does it help to let weight flow between tables, inside sealed boxes or with the walls open?
-3. What happens when the signal passes through layers of the same network at very different
-   densities, and when each layer steers the next?
+1. How concentrated is the weight, and how hard can the network be cut? (density)
+2. What happens when the same network runs at very different densities, and one layer guides
+   another? (steering)
+3. Can a few entries be found and removed so that the network gets better? (surgery)
+4. Do loops, memory and correction from the revealed answer help, and how? (loops and learning)
 
-The idea of the layers (normal, pressurized, neutron star, black hole, and back) is the operator's.
+The density layers (normal, pressurized, neutron star, black hole), the loops, the neuron with
+three loops, growth from a dense core and maturing cells that teach are the operator's ideas.
 Editing stored weights directly follows *Sparks of Weight-Space Programming* (Takehi, Teoh, Zhang,
-Khattab, 2026-11-02). Pressure, flow and walls are analogies on a table network; no fluid solver runs.
+Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on a table network.
 
 ## The network
 
-- **Outer network:** 27 box tables. **Inner network:** 729 tables, 27 per box.
-- **Tables:** order-2 bit-tree counts; entries seen once are dropped. 75,696,165 inner entries.
-- **Weight of an entry:** how often it was seen.
-- **Switch:** the box is chosen by cheapest cost over the previous 64 bytes, then the inner table
-  the same way among the 27 of that box.
+- **Outer network:** 27 box tables. **Inner network:** 729 tables, 27 per box, 75,696,165 entries.
+- **Tables:** order-2 bit-tree counts; an entry's weight is how often it was seen.
+- **Guide:** a switch picks the box, then the inner table, by cheapest cost over recent bytes.
+- **Held-out text:** the last 2,048 bytes of every block were never trained on; a split is 2,187
+  of those tails (4,478,976 bytes).
 
-## 1. Weight concentration
+## Map of the panels
+
+| Panel | Question | Result | Predictions met | Files |
+|---|---|---|---|---|
+| V39 | Density cuts, flow rules, layer stacks (first run, Node) | Weight is concentrated; flow helps; hourglass returns | 5 of 8 | `JUDGE-PRESSURE729-V39` |
+| V40 | The same in integer Rust; one layer steering the next | All 62 arms identical to V39; a dense layer steered by a lighter one improves; the layer after it pays 13% | 4 of 6 | `JUDGE-PRESSURE729-V40` |
+| V41 | Do the results repeat on two other held-out texts? | **Replicated**, within hundredths of a percent | 6 of 6 | `JUDGE-PRESSURE729-V41` |
+| V42 | Surgery: diagnose on one text, remove entries, judge on others | Removing 7,570 entries (1 in 10,000) gains **1.4%**; shams do nothing or hurt | 7 of 9 | `JUDGE-SURGERY729-V42` |
+| V43 | Blocks the network never trained on | Every pattern carries; no penalty (0.1%) | 4 of 6 | `JUDGE-PRESSURE729-V43` |
+| V44 | Longer guide memories, blending, rule-based cuts | Box memory 512 gains about 5% **in stream order** (see V46) | 4 of 6 | `JUDGE-TUNING729-V44`, `NOTE-V44-READ-WITH-V46` |
+| V45 | The law: does an ungated loop go bad? | **Not shown in the predicted form**; six rounds kept helping (2.3%, 1.9%); the loop's own view is about twice too good | 2 of 5 | `JUDGE-RECURRENCE729-V45`, [`LAW.md`](LAW.md) |
+| V46 | Still longer box memories, with a shuffled-order control | The whole box-memory gain is adjacency of related text; on unrelated pieces 512 costs **+11%** | 3 of 5 | `JUDGE-BOXGUIDE729-V46` |
+| V47 | A lazy guide that rescans only when unsure | **Not shown**: neither cheap nor close to the full guide | 1 of 4 | `JUDGE-LAZYGUIDE729-V47` |
+| V48 | Side loops with feedback to the sender (untrained) | **Not shown**; the denser the loop, the more its feedback costs | 4 of 6 | `JUDGE-LOOPS729-V48` |
+| V49 | A cell with three loops, side by side and in a row | Box neuron gains 4% in stream order (6% with an inner neuron) but costs 4.6% shuffled; dense loops add 0.5% under a good box guide | 5 of 10 | `JUDGE-NEURON729-V49` |
+| V50 | Sensing, memory, and a referee that corrects the values | **Gains 8.6% in stream order and 8.0% shuffled**; each loop's ablation hurts; density-ordered correction rates not shown | 4 of 5 | `JUDGE-THREELOOP729-V50` |
+| V51 | Autapses: a cell's own earlier choice returning after a delay | sealed, running | – | `SPEC-AUTAPSE729-V51` |
+| V52 | The same loops with trained weights | sealed, queued | – | `SPEC-TRAINED729-V52` |
+| V53 | Growth from a black-hole core that learns as it reads | sealed, queued | – | `SPEC-GROWTH729-V53` |
+| V54 | Read the weights (information against the box; nearest sibling), then edit | sealed, queued | – | `SPEC-READEDIT729-V54` |
+| V55 | Maturing cells that teach their neighbours | sealed, queued | – | `SPEC-MATURE729-V55` |
+
+Specs are in `specs/`, rows and judgements in `results/`.
+
+## What has been measured
+
+### Density
 
 | Heaviest share of entries | 1/2 | 1/4 | 1/8 | 1/16 | 1/64 | 1/256 |
 |---|---|---|---|---|---|---|
 | Share of total weight | 99.5% | 98.6% | 96.3% | 90.2% | 65.0% | 34.2% |
 
-The median entry was seen 5 times.
+Cost of cutting the inner network, weight allowed to flow between tables, box table as fallback
+(three held-out texts and one of unseen blocks):
 
-## 2. Density and flow
+| Density kept | 1/8 | 1/16 | 1/256 |
+|---|---|---|---|
+| Cost against the full network | +0.20% to +0.28% | +1.39% to +1.46% | +11.8% to +12.4% |
 
-Density is the share of inner entries kept; the total kept is the same for every rule at one density.
+Random cuts to 1/2 cost 9%. Without the box fallback the same cuts cost several times more.
 
-- **EQUAL:** each table keeps its own share (no flow).
-- **SEALED:** one threshold per box; weight flows between the 27 tables of a box.
-- **OPEN:** one threshold for all 729 tables.
-- **RANDOM** and **INVERSE** (the lightest entries kept) are controls.
-- A removed entry falls back to the box table (PARENT) or to probability 1/2 (FLAT).
+### Steering
 
-Coded size against the full inner network (1,083,359 bytes), PARENT fallback:
+- A layer cut to 1/256 that is **guided** by a full layer answers within 0.2% of the full network
+  (with pass-through). The same layer as the **guide** of a full layer costs 23%.
+- So the guide must be a full layer; the answering layer can be cut.
 
-| Density | EQUAL | SEALED | OPEN | RANDOM |
-|---|---|---|---|---|
-| 1/2 | 0.0% | −0.1% | −0.1% | +9.4% |
-| 1/4 | +0.6% | +0.1% | −0.1% | +13.6% |
-| 1/8 | +2.7% | +1.5% | +0.2% | +15.5% |
-| 1/16 | +5.1% | +3.8% | +1.4% | +16.2% |
-| 1/64 | +11.0% | +9.7% | +7.1% | +16.4% |
-| 1/256 | +14.3% | +13.4% | +12.4% | +16.0% |
+### Surgery
 
-With FLAT fallback the same cuts cost far more: at 1/16, +57% (EQUAL), +51% (SEALED), +18% (OPEN).
-All 62 arms are in `results/RESULT-PRESSURE729-V40.hbp`.
+| Entries removed (found on an exam text) | Two verdict texts |
+|---|---|
+| 1,000 most harmful (0.0013%) | −1.1%, −1.0% |
+| 7,570 most harmful (0.01%) | −1.4%, −1.4% |
+| All 1,437,697 that looked harmful | −0.6%, −0.6% |
+| Random sham, wrong-table sham (75,696 each) | +0.3%, +0.5% |
+| Six rounds of 7,570 (V45) | −2.3%, −1.9% |
 
-## 3. Layers at different densities
+About a quarter of the gain seen on the exam text carries over. A rule read from the tables alone
+(few observations, far from the box value) did not reproduce it.
 
-NORMAL = everything, PRESSURIZED = 1/4, NEUTRON STAR = 1/16, BLACK HOLE = 1/256, each sealed in its
-box. The prediction for a byte (the light) enters a layer; where the layer's chosen table still
-has the entry it replaces the incoming prediction, and where the entry was removed the light
-passes through unchanged.
+### The guide and its memory
 
-**FREE:** every layer chooses its own table. **STEER-k:** a layer may choose only among the k
-tables the layer before it ranks cheapest; with k = 1 it is steered entirely by the layer before.
+- A longer memory for the switch that chooses the box gains about 5% when the text is read in
+  stream order, and costs 11% or more on unrelated pieces. The gain is the adjacency of related
+  text, which a stream has.
+- A box cell that votes among three memories keeps a 4% gain in stream order and halves the
+  penalty on unrelated pieces (4.6%). No guide tested so far is good in both.
+- With an oracle that is handed the right inner table, 5% to 6% more is available.
 
-Bytes after each layer of the hourglass:
+### Loops and learning
 
-| Layer | Density | FREE | STEER-9 | STEER-3 | STEER-1 |
-|---|---|---|---|---|---|
-| 1 | NORMAL | 1,083,359 | 1,083,359 | 1,083,359 | 1,083,359 |
-| 2 | PRESSURIZED | 1,084,984 | 1,084,642 | 1,083,883 | 1,083,359 |
-| 3 | NEUTRON STAR | 1,092,592 | 1,090,655 | 1,086,910 | 1,084,247 |
-| 4 | BLACK HOLE | 1,105,462 | 1,096,679 | 1,089,384 | 1,085,128 |
-| 5 | NEUTRON STAR | 1,094,042 | 1,114,359 | 1,155,195 | 1,233,346 |
-| 6 | NORMAL | 1,084,235 | 1,087,667 | 1,101,849 | 1,126,088 |
+- **A referee that corrects the stored values after each prediction is the largest robust gain:**
+  about 8.6% in stream order and 8.0% on unrelated pieces. Removing the memory loop costs 5% to
+  9%; removing the sensing is catastrophic.
+- Untrained side loops did not help; feedback from layers that know less than the sender makes
+  the sender worse, and three such layers agreeing is not evidence.
+- Dense loops (long memory on the densest loop) add about 0.5% under a good box guide. Measured
+  once, not predicted, not yet replicated.
 
-Share of bytes each layer sent to the right inner table (per thousand):
+## Corrections kept on record
 
-| Layer | Density | FREE | STEER-9 | STEER-3 | STEER-1 |
-|---|---|---|---|---|---|
-| 1 | NORMAL | 376 | 376 | 376 | 376 |
-| 4 | BLACK HOLE | 134 | 171 | 227 | 319 |
-| 5 | NEUTRON STAR | 320 | 274 | 201 | 131 |
-| 6 | NORMAL | 373 | 365 | 345 | 318 |
+- **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
+  entries) hold for stream-order text only.
+- **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
+- **Seat predictions miss often** (49 of 76 met so far). They are sealed first for that reason.
 
-What the table shows:
+## Nearest published work
 
-- **A dense layer steered by a lighter one does better than when free.** The black-hole layer
-  improves from 1,105,462 to 1,085,128 as the steering tightens.
-- **The cost falls on the layer after the black hole.** Steered by the black hole's choice, the
-  neutron-star layer goes from 1,094,042 to 1,233,346 (+13%).
-- **One more layer recovers most of it:** the final layer ends 0.3%, 1.6% and 3.9% above the free end.
-- From the black hole outward (the OUTWARD stack) under STEER-1: 1,228,711 → 1,231,946 → 1,104,087
-  → 1,092,761.
+A search log, not an audit: [`docs/PRIOR-WORK-NOTES.md`](docs/PRIOR-WORK-NOTES.md).
 
-## Predictions
-
-Every prediction was written and committed before its run. Misses are kept.
-
-| Run | Met | Missed |
-|---|---|---|
-| V39 (first run, 8 predictions) | weight-guided beats random; PARENT beats FLAT; hourglass rises to the black hole and returns; outward stack ends at the normal value; the black-hole layer finds the right table less than half as often | the cut to 1/16 was predicted to cost over 10% and cost 0.8% over the plain baseline; OPEN was marginally above SEALED at 1/2; INVERSE was not the largest rule at 1/64 and 1/256 with PARENT |
-| V40 (integer run and STEER, 6 predictions) | the integer run reproduces the first run (all 62 arms and 10 layer rows identical); the layer after the black hole is over 2% worse under STEER-1 (it is 13.7% worse); OUTWARD ends below HOURGLASS; the last layer's share matches a free neutron-star layer | STEER-1 end predicted 0.5% to 3% above free, measured 3.9%; STEER-9 predicted within 0.3% of free everywhere, measured up to 2.0% |
-
-Judgements: `results/JUDGE-PRESSURE729-V39.hbp`, `results/JUDGE-PRESSURE729-V40.hbp`.
-
-## Nearest published work found in a first search
-
-- Pruning count-based language models with backoff to a lower-order model: Stolcke,
-  *Entropy-based Pruning of Backoff Language Models* (2000), https://arxiv.org/abs/cs/0006025.
-  Count-guided cuts with the PARENT fallback are of that family, and the finding that a few heavy
-  entries carry almost all the weight agrees with it.
-- One global budget against per-layer budgets in magnitude pruning: Lee et al., LAMP,
-  https://arxiv.org/abs/2010.07611; Zhou et al., global sparsity constraint,
-  https://arxiv.org/abs/2105.01571. EQUAL, SEALED and OPEN are of that family.
-- For stacks of one network at alternating densities with pass-through of removed entries, and for
-  one layer steering the next layer's table choice, that search returned hourglass architectures
-  with dense layers only.
+- Count-guided cuts with fallback: Stolcke, *Entropy-based Pruning of Backoff Language Models*
+  (2000). Budget flow: global against per-layer pruning (LAMP; global sparsity constraint).
+- Removing or merging experts: several 2026 papers on mixture-of-experts models.
+- Correcting values from the revealed answer, with a step that shrinks with age: standard in
+  adaptive data compression.
+- Small targeted weight edits: model editing, and the weight-space programming paper.
+- Not found in that search: one network at alternating extreme densities with pass-through; one
+  density steering another's choice at run time; loops of different sizes paired with densities.
 
 ## Reproduce
 
 ```
 cargo build --release
-./target/release/pressure729 <stream file>     # about 11 minutes, about 2 GB of memory
+./target/release/pressure729 <stream> [remainder] [unseen]   # V40, V41, V43
+./target/release/surgery729  <stream>                         # V42
+./target/release/tuning729   <stream>                         # V44
+./target/release/recurrence729 <stream>                       # V45
+./target/release/boxguide729 <stream>                         # V46
+./target/release/lazy729 | loops729 | neuron729 | threeloop729 <stream>   # V47 to V50
 ```
 
-The stream (2,692,693,942 bytes, 404,335 Asolaria files with duplicates dropped) stays on the
-operator's machine, so the hosted checks cover the code, the no-float rule, and two tests on a
-small synthetic stream; the full-stream rows are from the local run and are filed with the
-program's hash.
+Each run takes 10 to 60 minutes and about 2 GB of memory. The stream (2,692,693,942 bytes of
+Asolaria files with duplicates dropped) stays on the operator's machine, so the hosted checks
+cover the code, the no-float rule, the format, clippy and ten tests on a small synthetic stream;
+the full-stream rows are from local runs and are filed with their commit.
 
-## Scope and record
+## Scope
 
-- One stream, one split, one switch window (64 bytes).
-- The first run (V39) used a Node program whose cost table was built with floating logarithms.
-  The integer program here computes the same table exactly and reproduces every V39 number, so the
-  integer rows are the record and the V39 rows stay beside them as the first measurement.
-- Order of events: V39 spec sealed locally (sha256 `c59ea357…`) before its run; V39 rows first
-  published in draft pull request #34 of the QNN repository; V40 spec committed there as `0c28863`
-  and the Rust program as `fc9d6a8`, both before the integer run.
+- One stream, one set of tables, count tables and not a trained neural network.
+- Stream-order results rely on related text being adjacent; shuffled-order results are given
+  beside them from V46 on.
+- Exam and verdict texts come from the same stream, from different blocks.
+- No second seat has reviewed any of it.
+- The first run (V39) used a Node program with a float-built cost table; the integer program
+  reproduces it exactly and the integer rows are the record.
 - The big-integer module is copied unchanged from the QNN repository (git blob `23f5447e`).
 - Related: GPT-6's hosted 81-node pressure/box classifier experiment in
   `JesseBrown1980/GGUF-files-operating-as-trained-quantum-neural-network-models`.
