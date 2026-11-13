@@ -7,5 +7,6 @@
 pub mod bigint;
 pub mod lazy;
 pub mod loops;
+pub mod neuron;
 pub mod pressure_boxes;
 pub mod surgery;
