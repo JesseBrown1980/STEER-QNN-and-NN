@@ -112,6 +112,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                     (1000 * res.own_box + n / 2) / n,
                     (1000 * res.own_inner[x] + n / 2) / n
                 );
+                if arm.serial {
+                    let w: Vec<String> = res.passes[x].iter().map(|v| v.to_string()).collect();
+                    println!(
+                        "PASSES|case={}|box_switch={}|inner={}|bytes_after_each_pass={}|json=0",
+                        CASES[c].0,
+                        RULES[r].0,
+                        arm.name,
+                        w.join(",")
+                    );
+                }
             }
         }
     }

@@ -11,6 +11,9 @@ pub struct Arm {
     pub loops: Vec<(Option<usize>, usize)>,
     /// true = VOTE, false = SUM; ignored for a single loop
     pub vote: bool,
+    /// the loops in a row: the signal goes through the matrix once per loop, each pass guided by
+    /// that loop's memory; a kept entry replaces the incoming value, a missing one lets it through
+    pub serial: bool,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -27,6 +30,8 @@ pub struct Result {
     pub own_box: u64,
     pub bytes: Vec<i64>,
     pub own_inner: Vec<u64>,
+    /// for serial arms: the bytes after each pass through the matrix
+    pub passes: Vec<Vec<i64>>,
 }
 
 struct Loop {
@@ -86,6 +91,7 @@ struct State {
     age: usize,
     total: i64,
     on_mid: u64,
+    pass_total: Vec<i64>,
 }
 
 /// Every arm under one box switch on a text: `text.0[i]` is the block of the i-th tail of `text.1`.
@@ -115,6 +121,7 @@ pub fn run(
             age: 0,
             total: 0,
             on_mid: 0,
+            pass_total: vec![0; a.loops.len()],
         })
         .collect();
     let mut box_loops: Vec<Loop> = match box_rule {
@@ -129,6 +136,7 @@ pub fn run(
     let mut mval = vec![0u16; fan * 8];
     let mut cst = vec![0i32; fan];
     let mut normal_cost = vec![0i32; fan];
+    let mut cand = vec![0u16; fan * 8];
     let mut scratch = vec![0i64; fan];
     let (mut c1, mut c2) = (0usize, 0usize);
     let mut cur_t = usize::MAX;
@@ -187,6 +195,38 @@ pub fn run(
         }
         for (x, arm) in arms.iter().enumerate() {
             let s = &mut st[x];
+            if arm.serial {
+                let mut light = [0u16; 8];
+                light.copy_from_slice(&ptop[cur_t * 8..cur_t * 8 + 8]);
+                let (mut last_cost, mut last_pick) = (0i32, 0usize);
+                for (li, &(dens, _)) in arm.loops.iter().enumerate() {
+                    let pick = argmin(&s.loops[li].sum);
+                    for k in 0..fan {
+                        let th = dens.map_or(0, |d| sur.thr[d][1][cur_t * fan + k]);
+                        let mut ck = 0;
+                        for q in 0..8 {
+                            let e = k * 8 + q;
+                            let pv = if mhas[e] && mrank[e] >= th {
+                                mval[e]
+                            } else {
+                                light[q]
+                            };
+                            cand[e] = pv;
+                            ck += bc(pv, bits[q]);
+                        }
+                        cst[k] = ck;
+                    }
+                    s.loops[li].push(&cst, s.age);
+                    s.pass_total[li] += i64::from(cst[pick]);
+                    light.copy_from_slice(&cand[pick * 8..pick * 8 + 8]);
+                    last_cost = cst[pick];
+                    last_pick = pick;
+                }
+                s.total += i64::from(last_cost);
+                s.on_mid += u64::from(cur_t * fan + last_pick == own_m);
+                s.age += 1;
+                continue;
+            }
             let pick = fire(&s.loops, arm.vote, &mut scratch);
             s.total += i64::from(normal_cost[pick]);
             s.on_mid += u64::from(cur_t * fan + pick == own_m);
@@ -225,10 +265,15 @@ pub fn run(
         own_box,
         bytes: st.iter().map(|s| (s.total + 1024) / 2048).collect(),
         own_inner: st.iter().map(|s| s.on_mid).collect(),
+        passes: st
+            .iter()
+            .map(|s| s.pass_total.iter().map(|&v| (v + 1024) / 2048).collect())
+            .collect(),
     }
 }
 
 type ThreeLoops = [(Option<usize>, usize); 3];
+type FourPasses = [(Option<usize>, usize); 4];
 
 /// REFERENCE first, then NEURON, TIMESCALES_ONLY, DENSITIES_ONLY and REVERSED, each with SUM and VOTE.
 pub fn arms() -> Vec<Arm> {
@@ -242,6 +287,7 @@ pub fn arms() -> Vec<Arm> {
         name: "REFERENCE".to_string(),
         loops: vec![(None, 64)],
         vote: false,
+        serial: false,
     }];
     for (name, l) in kinds {
         for vote in [false, true] {
@@ -249,8 +295,37 @@ pub fn arms() -> Vec<Arm> {
                 name: format!("{name}_{}", if vote { "VOTE" } else { "SUM" }),
                 loops: l.to_vec(),
                 vote,
+                serial: false,
             });
         }
+    }
+    // the loops in a row (the operator's description): matrix, small loop, matrix, medium loop,
+    // matrix, big loop, matrix
+    let serial: [(&str, FourPasses); 4] = [
+        (
+            "SERIAL_SMALL_MEDIUM_BIG",
+            [(None, 8), (None, 64), (None, 512), (None, 4096)],
+        ),
+        (
+            "SERIAL_BIG_MEDIUM_SMALL",
+            [(None, 4096), (None, 512), (None, 64), (None, 8)],
+        ),
+        (
+            "SERIAL_SMALL_MEDIUM_BIG_DENSE",
+            [(None, 8), (None, 64), (Some(3), 512), (Some(5), 4096)],
+        ),
+        (
+            "SERIAL_BIG_MEDIUM_SMALL_DENSE",
+            [(Some(5), 4096), (Some(3), 512), (None, 64), (None, 8)],
+        ),
+    ];
+    for (name, l) in serial {
+        v.push(Arm {
+            name: name.to_string(),
+            loops: l.to_vec(),
+            vote: false,
+            serial: true,
+        });
     }
     v
 }
@@ -311,7 +386,7 @@ mod tests {
         let sur = surgery(&net);
         let (ids, bytes) = split(&net, 1);
         let a = arms();
-        assert_eq!(a.len(), 9);
+        assert_eq!(a.len(), 13);
         let r = run(&net, &sur, (&ids, &bytes), BoxRule::Plain64, &a);
         // REFERENCE under the plain box switch is the full network with box fallback
         let rows = evaluate(&net, &sur, &[3]);
@@ -330,11 +405,13 @@ mod tests {
             name: "ONE".to_string(),
             loops: vec![(None, 64)],
             vote: false,
+            serial: false,
         };
         let same = |vote: bool| Arm {
             name: "SAME".to_string(),
             loops: vec![(None, 64), (None, 64), (None, 64)],
             vote,
+            serial: false,
         };
         let t = run(
             &net,
@@ -345,6 +422,18 @@ mod tests {
         );
         assert_eq!(t.bytes[0], t.bytes[1]);
         assert_eq!(t.bytes[0], t.bytes[2]);
+        // one pass through the matrix guided by memory 64 is the reference; passes are reported
+        let single = Arm {
+            name: "SINGLE".to_string(),
+            loops: vec![(None, 64)],
+            vote: false,
+            serial: true,
+        };
+        let sp = run(&net, &sur, (&ids, &bytes), BoxRule::Plain64, &[single]);
+        assert_eq!(sp.bytes[0], base);
+        assert_eq!(sp.passes[0], vec![base]);
+        assert_eq!(r.passes[9].len(), 4);
+        assert_eq!(r.passes[9][3], r.bytes[9]);
         for rule in [BoxRule::NeuronSum, BoxRule::NeuronVote] {
             let n = run(&net, &sur, (&ids, &bytes), rule, &a);
             assert!(n.bytes.iter().all(|&b| b > 0));
