@@ -11,3 +11,4 @@ pub mod neuron;
 pub mod pressure_boxes;
 pub mod surgery;
 pub mod threeloop;
+pub mod trained;
