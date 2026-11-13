@@ -1,6 +1,6 @@
 # LAW: Recurrence is mind — with a ground-truth corrective gate
 
-**Status in this repository: NAMED.** The law is the operator's, stated in
+**Status in this repository: NAMED; first test (V45) did not show it in the predicted form.** The law is the operator's, stated in
 [N-Nest-Prime `LAW.md`](https://github.com/JesseBrown1980/N-Nest-Prime-INFINITE-SELF-REFLECT-AGENTS-NESTED/blob/main/LAW.md)
 and tested in software in `asolaria-stone-to-moss` (October 15, 2026). Panel V45
 (`specs/SPEC-RECURRENCE729-V45.hbp`) puts it to a measurable test on this repository's network.
@@ -41,3 +41,29 @@ These were measured before this file was written and are what suggested adopting
   nothing extra (V42).
 
 They are consistent with the law. They were not designed as a test of it; V45 is.
+
+## V45, the first deliberate test (November 13, 2026): not shown in the predicted form
+
+Three loops ran six rounds of diagnose-and-remove on the surgery patient
+(`results/JUDGE-RECURRENCE729-V45.hbp`).
+
+| Prediction | Result |
+|---|---|
+| The ungated loop improves in its own view every round | Met |
+| The ungated loop gets worse on independent text after round 3 or earlier | **Missed.** It kept improving on both verdict texts at every round |
+| The gated loop stops itself before round 6 | **Missed.** The gate text accepted all six proposals |
+| The watched loop ends at least as well with fewer cuts | Mixed: 28% of the cuts; better on one verdict text, worse on the other |
+
+What the rows do show:
+
+- **The loop's own view is too good by about a factor of two.** After six rounds it reads −4.65%
+  on its diagnosis text; the verdict texts read −2.27% and −1.85%. A diagnosis is still not a verdict.
+- **The real gain shrinks fast:** −1.58%, −0.31%, −0.21%, −0.08%, −0.05%, −0.04% per round on the
+  first verdict text.
+- **The watcher buys efficiency:** about the same result with 12,569 cuts in place of 45,420.
+
+So on this network, six rounds of small cuts did not reach the point where an ungated loop turns
+harmful. V42 did show that cutting everything a diagnosis flags does worse than cutting a little,
+so the drift exists at larger cuts. The law stays NAMED here: stated, tested once, and not yet
+shown by a test designed to show it. A longer loop, or larger cuts per round, is the test that
+could.
