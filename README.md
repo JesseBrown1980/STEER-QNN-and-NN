@@ -45,7 +45,7 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V46 | Still longer box memories, with a shuffled-order control | The whole box-memory gain is adjacency of related text; on unrelated pieces 512 costs **+11%** | 3 of 5 | `JUDGE-BOXGUIDE729-V46` |
 | V47 | A lazy guide that rescans only when unsure | **Not shown**: neither cheap nor close to the full guide | 1 of 4 | `JUDGE-LAZYGUIDE729-V47` |
 | V48 | Side loops with feedback to the sender (untrained) | **Not shown**; the denser the loop, the more its feedback costs | 4 of 6 | `JUDGE-LOOPS729-V48` |
-| V49 | A cell with three loops, side by side and in a row | Box neuron gains 4% in stream order (6% with an inner neuron) but costs 4.6% shuffled; dense loops add 0.5% under a good box guide | 5 of 10 | `JUDGE-NEURON729-V49` |
+| V49 | A cell with three loops, side by side and in a row | Box neuron gains 4% in stream order (6% with an inner neuron) but costs 4.6% shuffled; dense loops add 0.5% under a good box guide | 4 of 10 | `JUDGE-NEURON729-V49` |
 | V50 | Sensing, memory, and a referee that corrects the values | **Gains 8.6% in stream order and 8.0% shuffled**; each loop's ablation hurts; density-ordered correction rates not shown | 4 of 5 | `JUDGE-THREELOOP729-V50` |
 | V51 | Autapses: a cell's own earlier choice returning after a delay | sealed, running | – | `SPEC-AUTAPSE729-V51` |
 | V52 | The same loops with trained weights | sealed, queued | – | `SPEC-TRAINED729-V52` |
@@ -115,7 +115,7 @@ About a quarter of the gain seen on the exam text carries over. A rule read from
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (49 of 76 met so far). They are sealed first for that reason.
+- **Seat predictions miss often** (48 of 76 met so far). They are sealed first for that reason.
 
 ## Nearest published work
 
