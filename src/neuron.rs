@@ -14,6 +14,9 @@ pub struct Arm {
     /// the loops in a row: the signal goes through the matrix once per loop, each pass guided by
     /// that loop's memory; a kept entry replaces the incoming value, a missing one lets it through
     pub serial: bool,
+    /// autapses on a single-loop cell: the delays at which its own earlier choice returns, and the
+    /// signed strength (positive = that table gets cheaper)
+    pub autapse: Option<(Vec<usize>, i64)>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -21,7 +24,12 @@ pub enum BoxRule {
     Plain64,
     NeuronSum,
     NeuronVote,
+    /// memory 64 with three autapses (delays 8, 64, 512) of this signed strength
+    Autapse(i64),
 }
+
+pub const AUTAPSE_DELAYS: [usize; 3] = [8, 64, 512];
+const RING: usize = 1024;
 
 pub const BOX_MEMORIES: [usize; 3] = [64, 512, 4096];
 
@@ -86,12 +94,32 @@ fn fire(loops: &[Loop], vote: bool, scratch: &mut [i64]) -> usize {
     argmin(scratch)
 }
 
+/// The cheapest table after the returning choices are applied: each of the cell's own choices
+/// `delay` bytes ago changes that table's cost by `-strength`.
+fn fire_autapse(
+    sum: &[i64],
+    ring: &[usize],
+    age: usize,
+    delays: &[usize],
+    strength: i64,
+    scratch: &mut [i64],
+) -> usize {
+    scratch.copy_from_slice(sum);
+    for &d in delays {
+        if d <= age {
+            scratch[ring[(age - d) % RING]] -= strength;
+        }
+    }
+    argmin(scratch)
+}
+
 struct State {
     loops: Vec<Loop>,
     age: usize,
     total: i64,
     on_mid: u64,
     pass_total: Vec<i64>,
+    ring: Vec<usize>,
 }
 
 /// Every arm under one box switch on a text: `text.0[i]` is the block of the i-th tail of `text.1`.
@@ -122,10 +150,11 @@ pub fn run(
             total: 0,
             on_mid: 0,
             pass_total: vec![0; a.loops.len()],
+            ring: vec![0; RING],
         })
         .collect();
     let mut box_loops: Vec<Loop> = match box_rule {
-        BoxRule::Plain64 => vec![Loop::new(fan, 64)],
+        BoxRule::Plain64 | BoxRule::Autapse(_) => vec![Loop::new(fan, 64)],
         _ => BOX_MEMORIES.iter().map(|&m| Loop::new(fan, m)).collect(),
     };
     let (mut idx, mut bits) = ([0u32; 8], [0u8; 8]);
@@ -141,6 +170,7 @@ pub fn run(
     let (mut c1, mut c2) = (0usize, 0usize);
     let mut cur_t = usize::MAX;
     let mut own_box = 0u64;
+    let mut box_ring = vec![0usize; RING];
     for (i, &b) in mix.iter().enumerate() {
         let own = ids[i / tail];
         let (own_m, own_t) = (own / fan, own / (fan * fan));
@@ -152,7 +182,18 @@ pub fn run(
             bits[q] = bit;
             node = (node << 1) | bit as usize;
         }
-        let a = fire(&box_loops, box_rule == BoxRule::NeuronVote, &mut scratch);
+        let a = match box_rule {
+            BoxRule::Autapse(strength) => fire_autapse(
+                &box_loops[0].sum,
+                &box_ring,
+                i,
+                &AUTAPSE_DELAYS,
+                strength,
+                &mut scratch,
+            ),
+            _ => fire(&box_loops, box_rule == BoxRule::NeuronVote, &mut scratch),
+        };
+        box_ring[i % RING] = a;
         if a != cur_t {
             cur_t = a;
             for s in &mut st {
@@ -227,7 +268,18 @@ pub fn run(
                 s.age += 1;
                 continue;
             }
-            let pick = fire(&s.loops, arm.vote, &mut scratch);
+            let pick = match &arm.autapse {
+                Some((delays, strength)) => fire_autapse(
+                    &s.loops[0].sum,
+                    &s.ring,
+                    s.age,
+                    delays,
+                    *strength,
+                    &mut scratch,
+                ),
+                None => fire(&s.loops, arm.vote, &mut scratch),
+            };
+            s.ring[s.age % RING] = pick;
             s.total += i64::from(normal_cost[pick]);
             s.on_mid += u64::from(cur_t * fan + pick == own_m);
             for (li, &(dens, _)) in arm.loops.iter().enumerate() {
@@ -288,6 +340,7 @@ pub fn arms() -> Vec<Arm> {
         loops: vec![(None, 64)],
         vote: false,
         serial: false,
+        autapse: None,
     }];
     for (name, l) in kinds {
         for vote in [false, true] {
@@ -296,6 +349,7 @@ pub fn arms() -> Vec<Arm> {
                 loops: l.to_vec(),
                 vote,
                 serial: false,
+                autapse: None,
             });
         }
     }
@@ -325,9 +379,35 @@ pub fn arms() -> Vec<Arm> {
             loops: l.to_vec(),
             vote: false,
             serial: true,
+            autapse: None,
         });
     }
     v
+}
+
+/// The inner cells of the autapse panel (V51), REFERENCE first.
+pub fn autapse_arms() -> Vec<Arm> {
+    let mk = |name: &str, delays: &[usize], strength: i64| Arm {
+        name: name.to_string(),
+        loops: vec![(None, 64)],
+        vote: false,
+        serial: false,
+        autapse: if delays.is_empty() {
+            None
+        } else {
+            Some((delays.to_vec(), strength))
+        },
+    };
+    vec![
+        mk("REFERENCE", &[], 0),
+        mk("EXC_3_LOOPS_B256", &AUTAPSE_DELAYS, 256),
+        mk("EXC_3_LOOPS_B1024", &AUTAPSE_DELAYS, 1024),
+        mk("INH_3_LOOPS_B1024", &AUTAPSE_DELAYS, -1024),
+        mk("EXC_SMALL_ONLY", &[8], 3072),
+        mk("EXC_MEDIUM_ONLY", &[64], 3072),
+        mk("EXC_BIG_ONLY", &[512], 3072),
+        mk("EXC_3_EQUAL", &[64, 64, 64], 1024),
+    ]
 }
 
 #[cfg(test)]
@@ -406,12 +486,14 @@ mod tests {
             loops: vec![(None, 64)],
             vote: false,
             serial: false,
+            autapse: None,
         };
         let same = |vote: bool| Arm {
             name: "SAME".to_string(),
             loops: vec![(None, 64), (None, 64), (None, 64)],
             vote,
             serial: false,
+            autapse: None,
         };
         let t = run(
             &net,
@@ -428,12 +510,29 @@ mod tests {
             loops: vec![(None, 64)],
             vote: false,
             serial: true,
+            autapse: None,
         };
         let sp = run(&net, &sur, (&ids, &bytes), BoxRule::Plain64, &[single]);
         assert_eq!(sp.bytes[0], base);
         assert_eq!(sp.passes[0], vec![base]);
         assert_eq!(r.passes[9].len(), 4);
         assert_eq!(r.passes[9][3], r.bytes[9]);
+        // autapses of strength zero change nothing, at the inner cell and at the box cell
+        let au = autapse_arms();
+        assert_eq!(au.len(), 8);
+        let mut zero = au[2].clone();
+        zero.autapse = Some((AUTAPSE_DELAYS.to_vec(), 0));
+        let z = run(
+            &net,
+            &sur,
+            (&ids, &bytes),
+            BoxRule::Autapse(0),
+            &[au[0].clone(), zero],
+        );
+        assert_eq!(z.bytes[0], base);
+        assert_eq!(z.bytes[1], base);
+        let strong = run(&net, &sur, (&ids, &bytes), BoxRule::Autapse(4096), &au);
+        assert!(strong.bytes.iter().all(|&b| b > 0));
         for rule in [BoxRule::NeuronSum, BoxRule::NeuronVote] {
             let n = run(&net, &sur, (&ids, &bytes), rule, &a);
             assert!(n.bytes.iter().all(|&b| b > 0));
