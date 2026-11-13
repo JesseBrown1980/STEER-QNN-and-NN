@@ -30,6 +30,8 @@ pub struct Variant {
     pub blend: Option<u64>,
     /// remove an entry whose weight is at most .0 and whose value is at least .1 from the box value
     pub rule: Option<(u64, u16)>,
+    /// score this variant's used entries against the box value when the run collects harm
+    pub diagnose: bool,
 }
 
 impl Variant {
@@ -45,11 +47,13 @@ impl Variant {
             oracle: false,
             blend: None,
             rule: None,
+            diagnose: false,
         }
     }
 }
 
 /// one bit per entry of every inner table
+#[derive(Clone)]
 pub struct EntrySet {
     bits: Vec<Vec<u64>>,
     pub count: u64,
@@ -73,7 +77,7 @@ impl EntrySet {
             self.count += 1;
         }
     }
-    fn has(&self, table: usize, pos: usize) -> bool {
+    pub fn has(&self, table: usize, pos: usize) -> bool {
         self.bits[table][pos / 64] & (1 << (pos % 64)) != 0
     }
 }
@@ -82,8 +86,8 @@ pub struct Outcome {
     pub bytes: Vec<i64>,
     pub own_inner: Vec<u64>,
     pub total_bytes: usize,
-    /// (table << 32 | entry) -> (total harm, uses); filled only when asked
-    pub harm: HashMap<u64, (i64, u32)>,
+    /// per variant: (table << 32 | entry) -> (total harm, uses); filled only when asked
+    pub harm: Vec<HashMap<u64, (i64, u32)>>,
 }
 
 struct State {
@@ -190,7 +194,7 @@ pub fn run(
     let mut mval = vec![0u16; fan * 8];
     let mut level_cost = vec![0i32; LEVELS.len() * fan];
     let mut own_cost = vec![0i32; fan];
-    let mut harm: HashMap<u64, (i64, u32)> = HashMap::new();
+    let mut harm: Vec<HashMap<u64, (i64, u32)>> = variants.iter().map(|_| HashMap::new()).collect();
     let (mut c1, mut c2) = (0usize, 0usize);
     let mut cur_t = usize::MAX;
     for (i, &b) in mix.iter().enumerate() {
@@ -320,13 +324,24 @@ pub fn run(
             s.current = pick;
             s.total += i64::from(answer[pick]);
             s.on_mid += u64::from(cur_t * fan + pick == own_m);
-            if collect_harm && x == 0 {
+            if collect_harm && (v.diagnose || x == 0) {
+                // every entry of the chosen table that actually answered (not removed by an edit)
                 let id = cur_t * fan + pick;
+                let th = LEVELS[v.answer].map_or(0, |d| sur.thr[d][1][id]);
+                let gone = v.fused.is_some_and(|f| fused[f][id]);
                 for q in 0..8 {
                     let e = pick * 8 + q;
-                    if mhas[e] {
-                        let h = bc(mval[e], bits[q]) - bc(ptop[cur_t * 8 + q], bits[q]);
-                        let slot = harm
+                    let qv = ptop[cur_t * 8 + q];
+                    let used = !gone
+                        && mhas[e]
+                        && mrank[e] >= th
+                        && !v.excise.is_some_and(|s| excise[s].has(id, mpos[e]))
+                        && !v.rule.is_some_and(|(c, d)| {
+                            (mrank[e] >> 16) <= c && mval[e].abs_diff(qv) >= d
+                        });
+                    if used {
+                        let h = bc(mval[e], bits[q]) - bc(qv, bits[q]);
+                        let slot = harm[x]
                             .entry(((id as u64) << 32) | mpos[e] as u64)
                             .or_insert((0, 0));
                         slot.0 += i64::from(h);
@@ -540,8 +555,8 @@ mod tests {
         let g = guides();
         assert_eq!(g.len(), 15);
         let exam = run(&net, &sur, 2, &g, &[], &[], true, 64);
-        assert!(!exam.harm.is_empty());
-        let (sets, names) = excision_sets(&net, &exam.harm, &[5]);
+        assert!(!exam.harm[0].is_empty());
+        let (sets, names) = excision_sets(&net, &exam.harm[0], &[5]);
         assert_eq!(names.len(), 5);
         // an empty excision and an all-false fusion leave BASE unchanged; a plain level equals itself
         let empty = [EntrySet::new(&net)];

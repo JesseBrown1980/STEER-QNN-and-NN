@@ -90,14 +90,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             chosen = x;
         }
     }
-    let positive = exam.harm.values().filter(|h| h.0 > 0).count();
-    let negative = exam.harm.values().filter(|h| h.0 < 0).count();
-    let harm_sum: i64 = exam.harm.values().filter(|h| h.0 > 0).map(|h| h.0).sum();
+    let positive = exam.harm[0].values().filter(|h| h.0 > 0).count();
+    let negative = exam.harm[0].values().filter(|h| h.0 < 0).count();
+    let harm_sum: i64 = exam.harm[0].values().filter(|h| h.0 > 0).map(|h| h.0).sum();
     println!(
         "DIAGNOSIS|entries_used_on_exam={}|with_positive_harm={positive}|with_negative_harm={negative}|total_positive_harm_bytes={}|chosen_guide={}|chosen_guide_exam_bytes={}|base_exam_bytes={}|json=0",
-        exam.harm.len(), (harm_sum + 1024) / 2048, g[chosen].name, exam.bytes[chosen], exam.bytes[0]
+        exam.harm[0].len(), (harm_sum + 1024) / 2048, g[chosen].name, exam.bytes[chosen], exam.bytes[0]
     );
-    let (ex_sets, ex_names) = excision_sets(&net, &exam.harm, &SIZES);
+    let (ex_sets, ex_names) = excision_sets(&net, &exam.harm[0], &SIZES);
     for (s, n) in ex_sets.iter().zip(&ex_names) {
         println!("ENTRYSET|name={n}|entries={}|json=0", s.count);
     }
