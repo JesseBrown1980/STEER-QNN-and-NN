@@ -1,7 +1,8 @@
 //! Pressure boxes on 729 codex tables (panel V40): the integer run of panel V39 plus the
-//! STEER layer rule. usage: pressure729 <stream file> [remainder 0..8, default 4]
+//! STEER layer rule. usage: pressure729 <stream file> [remainder 0..8, default 4] [unseen]
 //! The stream is cut into 19683 equal blocks; the last 2048 bytes of every block j with
-//! j mod 9 = remainder are held out. Integers only.
+//! j mod 9 = remainder are held out. With `unseen`, those blocks are also left out of
+//! training entirely. Integers only.
 #![forbid(unsafe_code)]
 #![deny(clippy::float_arithmetic)]
 
@@ -26,12 +27,17 @@ impl Source for Stream {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
-    if args.len() != 2 && args.len() != 3 {
-        return Err("usage: pressure729 <stream file> [remainder 0..8]".into());
+    if args.len() < 2 || args.len() > 4 {
+        return Err("usage: pressure729 <stream file> [remainder 0..8] [unseen]".into());
     }
     let tail_rem: usize = match args.get(2) {
         Some(s) => s.parse()?,
         None => 4,
+    };
+    let unseen = match args.get(3).map(String::as_str) {
+        None => false,
+        Some("unseen") => true,
+        Some(_) => return Err("the third argument can only be `unseen`".into()),
     };
     if tail_rem > 8 {
         return Err("remainder must be 0..8".into());
@@ -48,8 +54,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         tail: 2048,
         tail_mod: 9,
         tail_rem,
+        skip_rem: unseen.then_some(tail_rem),
     };
-    println!("PRESSURE729|panel=V40|stream_bytes={size}|blocks=19683|block_bytes={block}|tail_bytes=2048|held_out=j_mod_9_is_{tail_rem}|arithmetic=integer|json=0");
+    println!("PRESSURE729|panel=V40|stream_bytes={size}|blocks=19683|block_bytes={block}|tail_bytes=2048|held_out=j_mod_9_is_{tail_rem}|those_blocks_left_out_of_training={}|arithmetic=integer|json=0", u8::from(unseen));
     let net = build(cfg, &mut Stream { file, block })?;
     let sur = surgery(&net);
     for row in &sur.rows {

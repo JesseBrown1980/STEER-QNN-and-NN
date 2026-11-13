@@ -25,6 +25,8 @@ pub struct Config {
     pub tail: usize,
     pub tail_mod: usize,
     pub tail_rem: usize,
+    /// blocks j with j mod tail_mod = this are left out of training entirely (their tails are still kept)
+    pub skip_rem: Option<usize>,
 }
 
 pub struct Table {
@@ -160,8 +162,12 @@ pub fn build(cfg: Config, src: &mut dyn Source) -> Result<Network, String> {
     };
     for j in 0..nl {
         src.read_block(j, &mut buf)?;
-        cnt.count(&buf[..ntr]);
         net.all_tails.extend_from_slice(&buf[ntr..]);
+        if cfg.skip_rem == Some(j % cfg.tail_mod) {
+            cnt.touched.clear();
+        } else {
+            cnt.count(&buf[..ntr]);
+        }
         if j % cfg.tail_mod == cfg.tail_rem {
             net.tail_ids.push(j);
             net.held_out.extend_from_slice(&buf[ntr..]);
@@ -724,6 +730,7 @@ mod tests {
             tail: 500,
             tail_mod: 3,
             tail_rem: 1,
+            skip_rem: None,
         };
         let net = build(cfg, &mut Synthetic { block: cfg.block }).expect("build");
         assert_eq!(

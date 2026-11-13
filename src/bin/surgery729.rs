@@ -50,6 +50,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         tail: 2048,
         tail_mod: 9,
         tail_rem: 4,
+        skip_rem: None,
     };
     println!("SURGERY729|panel=V42|stream_bytes={size}|blocks=19683|block_bytes={block}|tail_bytes=2048|exam=j_mod_9_is_{EXAM}|verdict=j_mod_9_is_{}_and_{}|arithmetic=integer|json=0", VERDICT[0], VERDICT[1]);
     let net = build(cfg, &mut Stream { file, block })?;

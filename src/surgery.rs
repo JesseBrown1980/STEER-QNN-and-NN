@@ -505,6 +505,7 @@ mod tests {
             tail: 500,
             tail_mod: 9,
             tail_rem: 4,
+            skip_rem: None,
         };
         let net = build(cfg, &mut Synthetic { block: cfg.block }).expect("build");
         let sur = surgery(&net);
