@@ -1,0 +1,8 @@
+JUDGE41|spec=specs/SPEC-PRESSURE729-V41-FRESH-SPLITS.hbp|results=results/RESULT-PRESSURE729-V41-SPLIT-1.hbp_(split_B)_and_results/RESULT-PRESSURE729-V41-SPLIT-7.hbp_(split_C)|date=2026-11-13|outcome=REPLICATED|tag=MEASURED|json=0
+JUDGE41|T1_EQUAL_smaller_than_RANDOM_at_all_6_densities,_both_fallbacks=MET_in_B_and_C|json=0
+JUDGE41|T2_PARENT_smaller_than_FLAT_in_all_30_cut_arms=MET_in_B_and_C|json=0
+JUDGE41|T3_OPEN_with_PARENT_against_the_full_network_with_PARENT,_permille=MET|split_A=1/8:+2.0,_1/16:+14.5,_1/256:+123.6|split_B=1/8:+2.8,_1/16:+14.0,_1/256:+117.6|split_C=1/8:+2.1,_1/16:+13.9,_1/256:+122.4|json=0
+JUDGE41|T4_free_hourglass_largest_after_BLACK_HOLE_and_back_within_3_permille=MET|B=1100851,1102641,1110208,1123304,1111739,1101777|C=1087657,1089085,1096745,1109842,1098118,1088511|end_against_first_layer=+0.8_permille_in_A,_B_and_C|json=0
+JUDGE41|T5_STEER-1_hourglass=MET|B=1100851,1100851,1101861,1102572,1250935,1142328|C=1087657,1087657,1088375,1089152,1239362,1128989|BLACK_HOLE_below_its_free_value_in_both|layer_after_it_against_free=+125_permille_(B),_+129_(C),_+127_(A)|end_against_free_end=+37_(B),_+37_(C),_+39_(A)|json=0
+JUDGE41|T6_baseline_within_50_permille_of_split_A=MET|A=1083359|B=1100851_(+16)|C=1087657_(+4)|json=0
+JUDGE41|scope=three_disjoint_held-out_sets_of_one_stream_and_one_set_of_tables;_not_another_corpus|json=0
