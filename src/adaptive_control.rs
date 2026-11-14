@@ -40,11 +40,7 @@ impl Counts {
     pub fn count_prefix(&mut self, prefix: &[u8]) {
         self.trained_bytes += prefix.len() as u64;
         walk_bits(prefix, |ix, bit| {
-            let counts = if bit == 0 {
-                &mut self.n0
-            } else {
-                &mut self.n1
-            };
+            let counts = if bit == 0 { &mut self.n0 } else { &mut self.n1 };
             let cell = &mut counts[ix as usize];
             *cell = cell
                 .checked_add(1)
