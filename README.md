@@ -58,6 +58,8 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V59 | A trained gated mixer in place of the hard switch | **The guide/answer asymmetry holds in a trained model**; the mix gains 4% to 5%; trained-then-frozen weights are far worse (cause open) | 4 of 6 | `JUDGE-MIXER729-V59` |
 | V60 | Measure the coherence length L; predict the stickiness from L alone | sealed, queued | – | `SPEC-COHERENCE729-V60` |
 | V61 | Bounded helper stores beside the cells (block, sphere, cube, path, step) | sealed, queued | – | `SPEC-HELPER729-V61` and addendum 1 |
+| V62 | Is a trained-then-frozen mixer bad because of the snapshot or a fault? | sealed; program not yet written | – | `SPEC-FROZEN729-V62` |
+| V63 | The strongest results on a test text that shares no factor with the powers of three (`j mod 11`) | **Carry over:** referee 8.8% and 8.2%; 1/16 core within 0.15 points; autapse guide 3.0% (4.0% under mod 9) and 1.4% | 3 of 3 | `JUDGE-PRIMESPLIT729-V63` |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -153,7 +155,7 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (77 of 127 met through V59). They are sealed first for that
+- **Seat predictions miss often** (80 of 130 met through V63). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
 - **Gains were expected to add and do not** (V57): the seat said about 12% and 9% before reading
@@ -198,6 +200,9 @@ the full-stream rows are from local runs and are filed with their commit.
 - Stream-order results rely on related text being adjacent; shuffled-order results are given
   beside them from V46 on.
 - Exam and verdict texts come from the same stream, from different blocks.
+- The network is built on powers of three and the test texts through V61 are blocks with
+  `j mod 9` equal to a remainder, so each takes the same three positions inside every table.
+  V63 repeats the strongest results on `j mod 11`, small scale; one prime, one remainder.
 - No second seat has reviewed any of it.
 - The first run (V39) used a Node program with a float-built cost table; the integer program
   reproduces it exactly and the integer rows are the record.
