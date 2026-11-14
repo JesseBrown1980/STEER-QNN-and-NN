@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Spec V68: weight editing on the stars (task vectors, confined edits, merging), then the
-readers of V66 (joint) and V67 (mixing) again. Integers only.
+"""Spec V68 and its addendum 1: weight editing on the stars (a table written by hand by the
+seat; task vectors, confined edits, merging), then the readers of V66 (joint) and V67 (mixing)
+again, with HITS and DIRECT. Integers only.
 
 usage: python -I -B tools/star_edit.py <wiki_text> <asolaria_stream> <kernel-pump dir>
 """
@@ -54,8 +55,31 @@ def lit_only(c, t):
     return out
 
 
+def table():
+    """The 62 hand-written edits, read from the sealed addendum."""
+    spec = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "specs", "SPEC-STAREDIT-V68-ADDENDUM-1.hbp")
+    row = [r for r in open(spec, encoding="utf-8").read().splitlines() if r.startswith("SE68A1TABLE|")][0]
+    out = []
+    for f in row.split("|")[2:-1]:
+        uv, e = f.split(">")
+        u, v = uv.split(".")
+        out.append((int(u) * N + int(v), int(e)))
+    assert len(out) == 62 and len({c for c, _ in out}) == 62
+    return out
+
+
+def programmed(c, tab):
+    out = c.copy()
+    for col, e in tab:
+        out[col] = 0
+        out[col, e] = 1
+    return out
+
+
 def main():
     wiki, stream, kp = sys.argv[1:4]
+    tab = table()
+    cols = np.array([c for c, _ in tab], dtype=np.int64)
 
     def cat(pattern):
         return b"".join(open(f, "rb").read() for f in sorted(glob.glob(os.path.join(kp, pattern))))
@@ -89,9 +113,24 @@ def main():
         print("CHECK|text=%s|PREV=%d|exact_PREV_of_V66=%d|mixture_of_the_text_reader_alone=%d|difference_per_1000000=%d|json=0" % (tname, prev, exact, prev_mix, abs(prev_mix - exact) * 1000000 // exact))
         print("REF|text=%s|HASH_ALONE_MIX=%d|json=0" % (tname, 100000 * mix([p1, key], x) // prev_mix))
 
+        zero = np.zeros(T, dtype=np.int64)
+        low = x & 3
+        direct_dark = read(zero, ((q - p1) % N) * 4 + low)
+        truth = np.zeros(N * N * N, dtype=np.int64)
+        np.add.at(truth, (p2 * N + p1) * N + q, 1)
+        truth = truth.reshape(N * N, N)
+        best = truth.argmax(axis=1)
+        print("TABLE_SCORE|text=%s|columns=62|written_emission_is_the_most_frequent_next_value_at=%d|steps_played_on_the_62_columns=%d_of_%d|steps_where_the_written_emission_came=%d|steps_where_the_most_frequent_value_came=%d|json=0"
+              % (tname, sum(int(best[c]) == e and int(truth[c].sum()) > 0 for c, e in tab), int(truth[cols].sum()), T,
+                 sum(int(truth[c, e]) for c, e in tab), int(truth[cols].max(axis=1).sum())))
+        print("REF|text=%s|DIRECT_cost_of_a_wholly_dark_star=%d|HITS_of_a_wholly_dark_star=%d|json=0" % (tname, direct_dark, int((p1 == q).sum())))
+
         def run(label, cubes):
             maps = [to_map(c) for c in cubes]
             lights = [m[p2 * N + p1] for m in maps]
+            hits = sum(int((l == q).sum()) for l in lights)
+            direct = sum(read(zero, ((q - l) % N) * 4 + low) for l in lights) // len(lights)
+            print("HIT|text=%s|edit=%s|stars=%d|HITS=%d|DIRECT=%d|json=0" % (tname, label, len(cubes), hits, 100000 * direct // direct_dark))
             a = mix([p1] + lights, x)
             b = mix([p1] + lights + [key], x)
             j = read(p1 * N + play(maps, q), x)
@@ -106,6 +145,15 @@ def main():
             run("DARK" + tag, [dark(c, t) for c, t in zip(base, TV)])
 
         edits(C, "")
+        run("PROGRAMMED", [programmed(c, tab) for c in C])
+        run("PROGRAMMED_ON_EMPTY", [programmed(np.zeros_like(C[0]), tab)])
+        sel = cols[whole[cols].max(axis=1) > 0]
+        trained = []
+        for c in C:
+            o = c.copy()
+            o[sel] = whole[sel]
+            trained.append(o)
+        run("TRAINED_SAME_62", trained)
         run("ADD_1", [c + t for c, t in zip(C, TV)])
         for k in (64, 256, 1024):
             run("DARK_%d" % k, [dark(c, t, k) for c, t in zip(C, TV)])
@@ -116,7 +164,9 @@ def main():
         run("MERGED_ADD_16", [16 * merged + whole])
         run("ONE_TEXT_STAR", [whole])
         for d in (1, 2, 3):
-            edits([scramble(c, n, d) for c, n in zip(C, names)], "_SCRAMBLED_%d" % d)
+            sc = [scramble(c, n, d) for c, n in zip(C, names)]
+            edits(sc, "_SCRAMBLED_%d" % d)
+            run("PROGRAMMED_SCRAMBLED_%d" % d, [programmed(c, tab) for c in sc])
 
 
 if __name__ == "__main__":
