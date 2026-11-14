@@ -26,3 +26,13 @@ priority audit, and it supports no claim of being first.
 - "Returned nothing" is the result of six searches. A proper audit would read the listed papers
   in full, search the compression literature (context mixing, PAQ-style model switching) directly,
   and be checked by a second seat.
+
+## Added 2026-11-14 (searches of that day; abstracts only, English)
+
+- **Autapses** (a neuron's synapse onto itself): reported in most neocortical pyramidal cells studied (Lubke et al. 1996 and later work). V51 uses the word for a delayed copy of a switch's own choice; nothing is claimed about biological neurons, and hysteresis in switching is a known device.
+- **Stickiness of a switch** (V60): the penalty log((K-1)(1-a)/a) for a source that changes with rate a is standard: Herbster and Warmuth, *Tracking the Best Expert* (1998); the Viterbi path of a switching model.
+- **Gated linear mixing** (V59): the logistic mixer of PAQ-style compressors (Mahoney); gated linear networks (Veness et al.).
+- **Helper memories beside a fixed model** (V61): cache language models (Kuhn and De Mori 1990); secondary estimation tables in PAQ-style coders; nearest-neighbour language models (Khandelwal et al. 2020; store pruned by 95%, He et al. 2021); parameters in external tables (Baykal et al. 2023); neuron-astrocyte associative memory (Kozachkov, Slotine, Krotov 2023).
+- **Not found in those searches:** helper capacity measured against the density of the layer it serves; a comparison of where the helper sits (per unit, per group, pooled, shared values against shared steps). A search that finds nothing is weak evidence.
+- **Affine-parameter replay** (Matrix Law Essentials PR #13, reviewed by this seat): the identities are the offline-online decomposition of reduced basis methods (Prud'homme et al. 2002; Rozza, Huynh, Patera 2008).
+

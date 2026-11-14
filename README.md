@@ -47,11 +47,17 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V48 | Side loops with feedback to the sender (untrained) | **Not shown**; the denser the loop, the more its feedback costs | 4 of 6 | `JUDGE-LOOPS729-V48` |
 | V49 | A cell with three loops, side by side and in a row | Box neuron gains 4% in stream order (6% with an inner neuron) but costs 4.6% shuffled; dense loops add 0.5% under a good box guide | 4 of 10 | `JUDGE-NEURON729-V49` |
 | V50 | Sensing, memory, and a referee that corrects the values | **Gains 8.6% in stream order and 8.0% shuffled**; each loop's ablation hurts; density-ordered correction rates not shown | 4 of 5 | `JUDGE-THREELOOP729-V50` |
-| V51 | Autapses: a cell's own earlier choice returning after a delay | sealed, running | – | `SPEC-AUTAPSE729-V51` |
-| V52 | The same loops with trained weights | sealed, queued | – | `SPEC-TRAINED729-V52` |
-| V53 | Growth from a black-hole core that learns as it reads | sealed, queued | – | `SPEC-GROWTH729-V53` |
-| V54 | Read the weights (information against the box; nearest sibling), then edit | sealed, queued | – | `SPEC-READEDIT729-V54` |
-| V55 | Maturing cells that teach their neighbours | sealed, queued | – | `SPEC-MATURE729-V55` |
+| V51 | Autapses: a cell's own earlier choice returning after a delay | A box cell with autapses of strength 4,096 gains **4.0% in stream order and 1.5%, 0.9% shuffled**: the first guide good in both; three delay sizes not shown | 4 of 5 | `JUDGE-AUTAPSE729-V51` |
+| V52 | The same loops with trained weights | Training adds little (0.9% against 0.7% untrained); dense loops earn weight | 2 of 5 | `JUDGE-TRAINED729-V52` |
+| V53 | Growth from a black-hole core that learns as it reads | From the 1/256 core: 1.3% better than the fixed full network; from the full network 8.6%; from nothing about 0.5% | 3 of 5 | `JUDGE-GROWTH729-V53` |
+| V54 | Read the weights (information against the box; nearest sibling), then edit | Cutting by information: 1/16 costs **+0.1%** (by weight +1.4%), 1/64 +1.3%, 1/256 +4.6%; hand edits of trained weights all worse | 4 of 5; 1 of 5 | `JUDGE-READEDIT729-V54`, `JUDGE-HANDEDIT729-V54E3` |
+| V55 | Maturing cells that teach their neighbours | Helps a young network (2.2%); **hurts a trained one** (4.4% where the fixed step gives 8.6%); adult neighbours as teachers hurt | 2 of 6 | `JUDGE-MATURE729-V55` |
+| V56 | Stronger autapses | Stronger is not better: 8,192 costs 3.4% shuffled, 32,768 and above collapse | 2 of 4 | `JUDGE-STRONGAUTAPSE729-V56` |
+| V57 | Autapse guide, referee and information cores in one network | Together **10.2% in stream order, 7.5% and 7.0% shuffled**; the gains overlap by about 3.5 points; a 1/16 core with the referee equals the full network | 3 of 6 | `JUDGE-COMBINED729-V57` |
+| V58 | A fast start with a floor on the correction step | sealed, running | – | `SPEC-FLOOR729-V58` |
+| V59 | A trained gated mixer in place of the hard switch | **The guide/answer asymmetry holds in a trained model**; the mix gains 4% to 5%; trained-then-frozen weights are far worse (cause open) | 4 of 6 | `JUDGE-MIXER729-V59` |
+| V60 | Measure the coherence length L; predict the stickiness from L alone | sealed, queued | – | `SPEC-COHERENCE729-V60` |
+| V61 | Bounded helper stores beside the cells (block, sphere, cube, path, step) | sealed, queued | – | `SPEC-HELPER729-V61` and addendum 1 |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -97,7 +103,12 @@ About a quarter of the gain seen on the exam text carries over. A rule read from
   stream order, and costs 11% or more on unrelated pieces. The gain is the adjacency of related
   text, which a stream has.
 - A box cell that votes among three memories keeps a 4% gain in stream order and halves the
-  penalty on unrelated pieces (4.6%). No guide tested so far is good in both.
+  penalty on unrelated pieces (4.6%).
+- **A box cell whose own earlier choice returns to it (an autapse, strength 4,096) is good in
+  both orders:** 4.0% in stream order, 1.5% and 0.9% on unrelated pieces. The evidence window
+  stays short, so a real change of text still overturns the choice. Stronger is worse (V56).
+- Whether the best strength follows from how long the best box stays the best is under test
+  (V60); the formula is a conjecture found after V51.
 - With an oracle that is handed the right inner table, 5% to 6% more is available.
 
 ### Loops and learning
@@ -109,13 +120,36 @@ About a quarter of the gain seen on the exam text carries over. A rule read from
   the sender worse, and three such layers agreeing is not evidence.
 - Dense loops (long memory on the densest loop) add about 0.5% under a good box guide. Measured
   once, not predicted, not yet replicated.
+- **Gains overlap.** Autapse guide alone 5.0%, referee alone 8.6%, both together 10.2% (stream
+  order); 2.3%/1.7%, 8.0%, 7.5%/7.0% shuffled. The inner autapse costs once the referee is on.
+- **Slowing or fixing what has been learned hurts:** maturing cells (V55), hand edits (V54),
+  frozen mixer weights (V59).
+- **Cutting by information, not weight:** a 1/16 core with the referee equals the full network
+  with the referee in both orders (V57).
+
+### A trained combination (V59)
+
+| Against the hard switch | Stream order | Shuffled |
+|---|---|---|
+| Mixer gated by the full guide | −5.1%, −5.0% | −4.3%, −4.2% |
+| Mixer, one weight set, no gate | −3.2% | −1.9%, −1.8% |
+| Mixer gated by a crushed (1/256) guide | −2.7%, −2.6% | −0.8%, −0.7% |
+| Crushed answerers, either gate | +10.1% to +10.6% | +9.4% to +9.8% |
+
+A crushed guide costs 2.4 to 3.6 points over full answerers and nothing over crushed ones: the
+guide is worth what there is to choose between. The mixer is the established one of PAQ-style
+compressors; the measurement is what is reported here.
 
 ## Corrections kept on record
 
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (48 of 76 met so far). They are sealed first for that reason.
+- **Seat predictions miss often** (73 of 123 met through V59). They are sealed first for that
+  reason.
+- **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
+- **Gains were expected to add and do not** (V57): the seat said about 12% and 9% before reading
+  the result; the measurement is 10.2% and about 7.3%.
 
 ## Nearest published work
 
@@ -140,11 +174,14 @@ cargo build --release
 ./target/release/recurrence729 <stream>                       # V45
 ./target/release/boxguide729 <stream>                         # V46
 ./target/release/lazy729 | loops729 | neuron729 | threeloop729 <stream>   # V47 to V50
+./target/release/autapse729 | trained729 | growth729 | read729 | handedit729 | mature729 | strong729 <stream>   # V51 to V56
+./target/release/combined729 | floor729 | mixer729 | coherence729 | helper729 <stream>   # V57 to V61
 ```
 
-Each run takes 10 to 60 minutes and about 2 GB of memory. The stream (2,692,693,942 bytes of
+Each run takes 10 to 60 minutes and 2 to 4 GB of memory; runs that keep learned entries are
+run one at a time. The stream (2,692,693,942 bytes of
 Asolaria files with duplicates dropped) stays on the operator's machine, so the hosted checks
-cover the code, the no-float rule, the format, clippy and ten tests on a small synthetic stream;
+cover the code, the no-float rule, the format, clippy and fourteen tests on a small synthetic stream;
 the full-stream rows are from local runs and are filed with their commit.
 
 ## Scope
