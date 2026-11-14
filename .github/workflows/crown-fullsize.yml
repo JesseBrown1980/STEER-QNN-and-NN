@@ -1,0 +1,144 @@
+# Spec V74 (specs/SPEC-CROWN-FULLSIZE-V74.hbp): the crown codec vc65 at its own table size
+# on the whole of enwik9, one stream, in two streaming GitRAM cells: encode, then decode.
+# The stream travels from the first cell to the second as an artifact. sha256 and cmp are
+# run here, outside the program that made the stream. Started by hand only.
+name: crown-fullsize
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: crown-fullsize
+  cancel-in-progress: false
+env:
+  ENWIK9_SHA256: 8eb36417ee09c7906309a465eeab4a8aa305e276e12ccc955feb744547c91a4a
+  PREFIX_SHA256: a74116640350872f17ef8c9adbdf6940c221e3ccfae7f7599a3c88cd65837b05
+  VC65_SHA256: 64ae366fd87b71a21dde64e9156b997eb44c6d1743e2b944a4a63c492b56f94b
+  HEAD350_SHA256: 0b59569c209be67e8d7f1ba30b10adfdbd63d7ff7084ec9700a071eeb1c8a3be
+  PROBE_PAYLOAD: "222180"
+  PROBE_SHA16: 57e30573e65a27e8
+jobs:
+  encode:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: cell
+        run: |
+          nproc; free -m; df -h . /mnt | cat; swapon --show || true
+      - name: Rust 1.81
+        run: |
+          rustup toolchain install 1.81.0 --profile minimal
+          rustc +1.81.0 --version
+      - name: G1 sources are the sealed ones
+        run: |
+          set -euo pipefail
+          test "$(sha256sum crown/vc65.rs | cut -d' ' -f1)" = "$VC65_SHA256"
+          test "$(head -n 350 crown/vc65_phase.rs | sha256sum | cut -d' ' -f1)" = "$HEAD350_SHA256"
+          test "$(head -n 350 crown/vc65.rs | sha256sum | cut -d' ' -f1)" = "$HEAD350_SHA256"
+          echo "GATE|G1=PASS|json=0" | tee -a rows.hbp
+      - name: build
+        run: |
+          set -euo pipefail
+          rustc +1.81.0 -O -o vc65_phase crown/vc65_phase.rs 2> build.err || { cat build.err; exit 1; }
+          ls -l vc65_phase
+      - name: enwik9
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 -o enwik9.zip https://mattmahoney.net/dc/enwik9.zip
+          unzip -o -q enwik9.zip && rm enwik9.zip
+          test "$(stat -c%s enwik9)" = "1000000000"
+          test "$(sha256sum enwik9 | cut -d' ' -f1)" = "$ENWIK9_SHA256"
+          head -c 1000000 enwik9 > prefix
+          test "$(sha256sum prefix | cut -d' ' -f1)" = "$PREFIX_SHA256"
+          echo "CORPUS|name=enwik9|bytes=1000000000|sha256=$ENWIK9_SHA256|json=0" | tee -a rows.hbp
+      - name: G2 and G3 on the first 1,000,000 bytes
+        run: |
+          set -euo pipefail
+          ./vc65_phase probe prefix 10 | tee probe.row
+          grep -q "payload=$PROBE_PAYLOAD|comp_sha16=$PROBE_SHA16|restore=OK" probe.row
+          echo "GATE|G2=PASS|json=0" | tee -a rows.hbp
+          ./vc65_phase enc prefix 10 prefix.stream 2> /dev/null
+          test "$(sha256sum prefix.stream | cut -c1-16)" = "$PROBE_SHA16"
+          ./vc65_phase dec prefix.stream 1000000 10 prefix.out 2> /dev/null
+          cmp prefix.out prefix
+          echo "GATE|G3=PASS|json=0" | tee -a rows.hbp
+          cat probe.row >> rows.hbp
+      - name: encode the whole of enwik9
+        run: |
+          set -euo pipefail
+          /usr/bin/time -v -o enc.time ./vc65_phase enc enwik9 10 stream.bin > enc.row 2> enc.err &
+          PID=$!
+          while kill -0 $PID 2> /dev/null; do sleep 600; tail -n 1 enc.err || true; free -m | sed -n 2p; done
+          wait $PID
+          cat enc.row | tee -a rows.hbp
+          tail -n 3 enc.err
+          RSS=$(grep "Maximum resident set size" enc.time | grep -o '[0-9]*$')
+          WALL=$(grep "Elapsed (wall clock)" enc.time | sed 's/.*): //')
+          KEYS=$(grep -o 'match_keys=[0-9]*' enc.err | tail -n 1 | cut -d= -f2)
+          PAY=$(stat -c%s stream.bin)
+          SHA=$(sha256sum stream.bin | cut -d' ' -f1)
+          echo "STREAM|payload=$PAY|sha256=$SHA|sha16=${SHA:0:16}|match_keys_at_end=$KEYS|enc_wall=$WALL|enc_max_rss_kb=$RSS|runner=$RUNNER_NAME|cell=github_hosted_ubuntu_24.04|json=0" | tee -a rows.hbp
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: crown-encode
+          path: |
+            stream.bin
+            rows.hbp
+            enc.err
+            enc.time
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+  decode:
+    needs: encode
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@v4
+        with:
+          name: crown-encode
+      - name: Rust 1.81 and build
+        run: |
+          set -euo pipefail
+          free -m
+          rustup toolchain install 1.81.0 --profile minimal
+          test "$(head -n 350 crown/vc65_phase.rs | sha256sum | cut -d' ' -f1)" = "$HEAD350_SHA256"
+          rustc +1.81.0 -O -o vc65_phase crown/vc65_phase.rs 2> build.err || { cat build.err; exit 1; }
+      - name: enwik9
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 -o enwik9.zip https://mattmahoney.net/dc/enwik9.zip
+          unzip -o -q enwik9.zip && rm enwik9.zip
+          test "$(sha256sum enwik9 | cut -d' ' -f1)" = "$ENWIK9_SHA256"
+      - name: decode the stream
+        run: |
+          set -euo pipefail
+          /usr/bin/time -v -o dec.time ./vc65_phase dec stream.bin 1000000000 10 restored > dec.row 2> dec.err &
+          PID=$!
+          while kill -0 $PID 2> /dev/null; do sleep 600; tail -n 1 dec.err || true; free -m | sed -n 2p; done
+          wait $PID
+          cat dec.row | tee -a rows.hbp
+          RSS=$(grep "Maximum resident set size" dec.time | grep -o '[0-9]*$')
+          WALL=$(grep "Elapsed (wall clock)" dec.time | sed 's/.*): //')
+          OUT=$(sha256sum restored | cut -d' ' -f1)
+          if cmp -s restored enwik9 && [ "$OUT" = "$ENWIK9_SHA256" ]; then R=OK; else R=FAIL; fi
+          PAY=$(stat -c%s stream.bin)
+          PH=$(stat -c%s crown/vc65_phase.rs)
+          N=1000000000
+          b() { echo $(( ( ($PAY + $1) * 80000 + N / 2 ) / N )); }
+          echo "RESTORE|restore=$R|restored_sha256=$OUT|cmp_with_enwik9=$([ $R = OK ] && echo identical || echo differs)|dec_wall=$WALL|dec_max_rss_kb=$RSS|runner=$RUNNER_NAME|json=0" | tee -a rows.hbp
+          echo "CROWN|program=vc65_phase|k=10|N=$N|payload=$PAY|total_with_decoder_20029=$(( PAY + 20029 ))|bpc_x10000=$(b 20029)|total_with_decoder_20128=$(( PAY + 20128 ))|bpc_x10000_b=$(b 20128)|total_with_decoder_$PH=$(( PAY + PH ))|bpc_x10000_c=$(b $PH)|restore=$R|json=0" | tee -a rows.hbp
+          test "$R" = "OK"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: crown-rows
+          path: |
+            rows.hbp
+            dec.err
+            dec.time
+          if-no-files-found: warn
+          retention-days: 90
