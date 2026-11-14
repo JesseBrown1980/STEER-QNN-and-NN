@@ -59,8 +59,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let rd = read(&net, &sur);
     let a = arms();
     let mut done: Vec<Outcome> = Vec::new();
-    // two texts at a time: every run keeps three unbounded stores and the slot arrays
-    for chunk in CASES.chunks(2) {
+    // one text at a time: every run keeps three unbounded stores and the slot arrays
+    for chunk in CASES.chunks(1) {
         let part: Vec<Outcome> = std::thread::scope(|s| {
             let handles: Vec<_> = chunk
                 .iter()
