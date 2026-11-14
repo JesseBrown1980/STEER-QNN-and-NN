@@ -99,6 +99,11 @@ def main():
             n1, m1, x1 = clumps(RM[lo:hi])
             n2, m2, x2 = clumps(LM[lo:hi])
             mean = (m1 * n1 + m2 * n2) // (n1 + n2) if n1 + n2 else 0
+            used = set()
+            for V, M in ((R, RM), (L, LM)):
+                d = lo + np.flatnonzero(M[lo:hi])
+                d = d[d >= 2]
+                used.update(np.unique(V[d - 2] * N + V[d - 1]).tolist())
             s = R[lo:min(hi, lo + T)]
             if len(s) >= 729:
                 a = np.concatenate(([0], s[:-1]))
@@ -106,8 +111,8 @@ def main():
                 cost2 = read((b * N + a), s) // len(s)
             else:
                 cost2 = -1
-            print("SHELL|universe=%s|shell=%d|temperature=%d|cells=%d|MATTER=%d|matter_per_100000=%d|clumps=%d|mean_clump_length_thousandths=%d|longest_clump=%d|distinct_values_in_sample=%d|COST2=%d|json=0"
-                  % (uname, k, 3 ** (15 - k) if cooling else 1, cells, matter, 100000 * matter // cells, n1 + n2, mean, max(x1, x2), len(np.unique(s)), cost2))
+            print("SHELL|universe=%s|shell=%d|temperature=%d|cells=%d|MATTER=%d|matter_per_100000=%d|clumps=%d|mean_clump_length_thousandths=%d|longest_clump=%d|CONTAINERS=%d|FREE_CELLS=%d|distinct_values_in_sample=%d|COST2=%d|json=0"
+                  % (uname, k, 3 ** (15 - k) if cooling else 1, cells, matter, 100000 * matter // cells, n1 + n2, mean, max(x1, x2), len(used), cells - matter, len(np.unique(s)), cost2))
             sys.stdout.flush()
         hot = to_map(counts(R[:3 ** 9]))
         cold = to_map(counts(R[3 ** 15:3 ** 15 + T]))
