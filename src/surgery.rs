@@ -117,6 +117,29 @@ pub fn split(net: &Network, rem: usize) -> (Vec<usize>, Vec<u8>) {
 }
 
 /// The same tails in an order fixed by a hash of the block number, so that neighbours are unrelated.
+/// The tails of the blocks with `j % modulus == rem`, in block order or in the shuffled order of
+/// `split_shuffled`. Any modulus: every block's tail is held out of training.
+pub fn split_by(
+    net: &Network,
+    modulus: usize,
+    rem: usize,
+    shuffled: bool,
+) -> (Vec<usize>, Vec<u8>) {
+    let fan = net.cfg.fan;
+    let tail = net.cfg.tail;
+    let mut ids: Vec<usize> = (0..fan * fan * fan)
+        .filter(|j| j % modulus == rem)
+        .collect();
+    if shuffled {
+        ids.sort_unstable_by_key(|&j| (h16(j as u32 ^ 0x2545_f491), j));
+    }
+    let mut bytes = Vec::with_capacity(ids.len() * tail);
+    for &j in &ids {
+        bytes.extend_from_slice(&net.all_tails[j * tail..(j + 1) * tail]);
+    }
+    (ids, bytes)
+}
+
 pub fn split_shuffled(net: &Network, rem: usize) -> (Vec<usize>, Vec<u8>) {
     let tail = net.cfg.tail;
     let (mut ids, _) = split(net, rem);
@@ -594,6 +617,21 @@ mod tests {
             skip_rem: None,
         };
         let net = build(cfg, &mut Synthetic { block: cfg.block }).expect("build");
+        for rem in 0..3 {
+            assert_eq!(
+                split_by(&net, net.cfg.tail_mod, rem, false),
+                split(&net, rem)
+            );
+            assert_eq!(
+                split_by(&net, net.cfg.tail_mod, rem, true),
+                split_shuffled(&net, rem)
+            );
+        }
+        let (prime_ids, prime_bytes) = split_by(&net, 5, 1, false);
+        assert!(
+            prime_ids.iter().all(|j| j % 5 == 1)
+                && prime_bytes.len() == prime_ids.len() * net.cfg.tail
+        );
         let sur = surgery(&net);
         assert_eq!(net.all_tails.len(), 27 * 500);
         let (ids, bytes) = split(&net, 2);
