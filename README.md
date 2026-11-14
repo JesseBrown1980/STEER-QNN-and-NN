@@ -54,7 +54,7 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V55 | Maturing cells that teach their neighbours | Helps a young network (2.2%); **hurts a trained one** (4.4% where the fixed step gives 8.6%); adult neighbours as teachers hurt | 2 of 6 | `JUDGE-MATURE729-V55` |
 | V56 | Stronger autapses | Stronger is not better: 8,192 costs 3.4% shuffled, 32,768 and above collapse | 2 of 4 | `JUDGE-STRONGAUTAPSE729-V56` |
 | V57 | Autapse guide, referee and information cores in one network | Together **10.2% in stream order, 7.5% and 7.0% shuffled**; the gains overlap by about 3.5 points; a 1/16 core with the referee equals the full network | 3 of 6 | `JUDGE-COMBINED729-V57` |
-| V58 | A fast start with a floor on the correction step | sealed, running | – | `SPEC-FLOOR729-V58` |
+| V58 | A fast start with a floor on the correction step | **Shown:** 0.9% better than the fixed step on the full network, 1.7% to 2.1% from the 1/256 core, in both orders | 4 of 4 | `JUDGE-FLOOR729-V58` |
 | V59 | A trained gated mixer in place of the hard switch | **The guide/answer asymmetry holds in a trained model**; the mix gains 4% to 5%; trained-then-frozen weights are far worse (cause open) | 4 of 6 | `JUDGE-MIXER729-V59` |
 | V60 | Measure the coherence length L; predict the stickiness from L alone | sealed, queued | – | `SPEC-COHERENCE729-V60` |
 | V61 | Bounded helper stores beside the cells (block, sphere, cube, path, step) | sealed, queued | – | `SPEC-HELPER729-V61` and addendum 1 |
@@ -122,6 +122,14 @@ About a quarter of the gain seen on the exam text carries over. A rule read from
   once, not predicted, not yet replicated.
 - **Gains overlap.** Autapse guide alone 5.0%, referee alone 8.6%, both together 10.2% (stream
   order); 2.3%/1.7%, 8.0%, 7.5%/7.0% shuffled. The inner autapse costs once the referee is on.
+- **The referee is ordinary adaptation applied to this network** (second-seat control, PR #3,
+  run on the stream 2026-11-14). A plain order-2 model with no boxes gains 24% from the same
+  correction rule in stream order (the network: 8.6%) and 6.0% shuffled (the network: 8.0%).
+  The plain model never beats the network: it needs 27% more bytes in stream order and 53%
+  more shuffled. Capacity is not matched (one table against 756), so this bounds the claim and
+  does not close it.
+- **A cell should start fast and keep a steady step** (V58): 1/4 on its first corrections,
+  halving to a floor of 1/16.
 - **Slowing or fixing what has been learned hurts:** maturing cells (V55), hand edits (V54),
   frozen mixer weights (V59).
 - **Cutting by information, not weight:** a 1/16 core with the referee equals the full network
@@ -145,7 +153,7 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (73 of 123 met through V59). They are sealed first for that
+- **Seat predictions miss often** (77 of 127 met through V59). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
 - **Gains were expected to add and do not** (V57): the seat said about 12% and 9% before reading
