@@ -25,7 +25,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object results/RESULT-COMBINED729-V57.hbp)" = 89eaf0ba312975a029f51cf4dec6e5c976c579e8
-          grep -Fq 'Sealed numerical predictions: none' specs/SPEC-ADAPTIVE729-SECOND-SEAT-20261114.md
+          grep -Fq '**Sealed numerical predictions:** none' specs/SPEC-ADAPTIVE729-SECOND-SEAT-20261114.md
           grep -Fq 'REAL_STREAM=NOT_RUN' specs/SPEC-ADAPTIVE729-SECOND-SEAT-20261114.md
       - name: Run independent no-guide online model's synthetic tests
         run: |
