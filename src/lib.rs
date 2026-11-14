@@ -9,6 +9,7 @@ pub mod combined;
 pub mod lazy;
 pub mod loops;
 pub mod mature;
+pub mod mixer;
 pub mod neuron;
 pub mod pressure_boxes;
 pub mod reading;
