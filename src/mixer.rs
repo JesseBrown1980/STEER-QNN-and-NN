@@ -21,6 +21,8 @@ pub enum Gate {
     Full,
     BlackHole,
     Autapse,
+    /// no mixer: the box table of the chosen box alone (panel V62 check)
+    BoxOnly,
 }
 
 #[derive(Clone)]
@@ -36,6 +38,24 @@ pub struct Outcome {
     pub bytes: Vec<i64>,
     /// the weight sets at the end, per arm (empty for the switch)
     pub weights: Vec<Vec<i32>>,
+    /// per arm that asked for it: each weight set averaged over the bits on which it was used
+    /// (integer sums, rounded down; a set never used keeps the start weights); else empty
+    pub averaged: Vec<Vec<i32>>,
+    /// per arm that asked for the average: the number of weight sets used at least once
+    pub used_sets: Vec<usize>,
+}
+
+/// One arm of a run, with its own training step (panel V62).
+#[derive(Clone, Copy)]
+pub struct Spec<'a> {
+    pub gate: Gate,
+    pub crushed_inputs: bool,
+    /// a weight grows by (input x (truth - p)) >> shift
+    pub shift: u32,
+    /// starting weight sets (None = weight 1 on the box table)
+    pub init: Option<&'a [i32]>,
+    pub frozen: bool,
+    pub average: bool,
 }
 
 /// log-odds of p/4096 in 1/256 bit, and its inverse table over [-LIMIT, LIMIT]
@@ -59,11 +79,12 @@ pub fn tables() -> (Vec<i32>, Vec<u16>) {
 struct State {
     w: Vec<i32>,
     total: i64,
+    sum: Vec<i64>,
+    count: Vec<i64>,
 }
 
 /// Every arm on a text. `init`: starting weight sets per arm (None = weight 1 on the box table);
 /// `frozen`: the weights are not trained.
-#[allow(clippy::too_many_lines, clippy::needless_range_loop)]
 pub fn run(
     net: &Network,
     sur: &Surgery,
@@ -72,6 +93,24 @@ pub fn run(
     init: Option<&[Vec<i32>]>,
     frozen: bool,
 ) -> Outcome {
+    let specs: Vec<Spec> = arms
+        .iter()
+        .enumerate()
+        .map(|(x, a)| Spec {
+            gate: a.gate,
+            crushed_inputs: a.crushed_inputs,
+            shift: SHIFT,
+            init: init.map(|all| all[x].as_slice()),
+            frozen,
+            average: false,
+        })
+        .collect();
+    run_specs(net, sur, text, &specs)
+}
+
+/// Every arm on a text, each with its own step, start weights and averaging.
+#[allow(clippy::too_many_lines, clippy::needless_range_loop)]
+pub fn run_specs(net: &Network, sur: &Surgery, text: (&[usize], &[u8]), arms: &[Spec]) -> Outcome {
     let fan = net.cfg.fan;
     let nin = fan + 1;
     let (_, mix) = text;
@@ -86,17 +125,16 @@ pub fn run(
     };
     let sets = |g: Gate| -> usize {
         match g {
-            Gate::Switch => 0,
+            Gate::Switch | Gate::BoxOnly => 0,
             Gate::Single => 1,
             _ => fan * fan,
         }
     };
     let mut st: Vec<State> = arms
         .iter()
-        .enumerate()
-        .map(|(x, a)| {
-            let w = match init {
-                Some(all) => all[x].clone(),
+        .map(|a| {
+            let w = match a.init {
+                Some(given) => given.to_vec(),
                 None => {
                     let mut w = vec![0i32; sets(a.gate) * nin];
                     for s in 0..sets(a.gate) {
@@ -105,7 +143,13 @@ pub fn run(
                     w
                 }
             };
-            State { w, total: 0 }
+            let n = if a.average { sets(a.gate) } else { 0 };
+            State {
+                w,
+                total: 0,
+                sum: vec![0i64; n * nin],
+                count: vec![0i64; n],
+            }
         })
         .collect();
     // the three guides, shared by the arms
@@ -198,8 +242,12 @@ pub fn run(
                 s.total += i64::from(cfull[pick_full]);
                 continue;
             }
+            if arm.gate == Gate::BoxOnly {
+                s.total += i64::from(acost[cur_t]);
+                continue;
+            }
             let set = match arm.gate {
-                Gate::Single | Gate::Switch => 0,
+                Gate::Single | Gate::Switch | Gate::BoxOnly => 0,
                 Gate::Full => cur_t * fan + pick_full,
                 Gate::BlackHole => cur_t * fan + pick_bh,
                 Gate::Autapse => cur_t * fan + pick_aut,
@@ -217,11 +265,18 @@ pub fn run(
                 let logit = (dot >> 16).clamp(i64::from(-LIMIT), i64::from(LIMIT)) as i32;
                 let p = squash[(logit + LIMIT) as usize];
                 s.total += i64::from(bc(p, bits[q]));
-                if !frozen {
+                if !arm.frozen {
                     let err = (i32::from(bits[q]) << 12) - i32::from(p);
                     for k in 0..nin {
-                        w[k] = (w[k] + ((input[k] * err) >> SHIFT)).clamp(-(1 << 24), 1 << 24);
+                        w[k] = (w[k] + ((input[k] * err) >> arm.shift)).clamp(-(1 << 24), 1 << 24);
                     }
+                }
+                if arm.average {
+                    let acc = &mut s.sum[set * nin..(set + 1) * nin];
+                    for k in 0..nin {
+                        acc[k] += i64::from(w[k]);
+                    }
+                    s.count[set] += 1;
                 }
             }
         }
@@ -242,9 +297,32 @@ pub fn run(
         c2 = c1;
         c1 = b as usize;
     }
+    let averaged = st
+        .iter()
+        .map(|s| {
+            let mut out = vec![0i32; s.sum.len()];
+            for (set, &n) in s.count.iter().enumerate() {
+                for k in 0..nin {
+                    out[set * nin + k] = if n > 0 {
+                        s.sum[set * nin + k].div_euclid(n) as i32
+                    } else if k == fan {
+                        ONE
+                    } else {
+                        0
+                    };
+                }
+            }
+            out
+        })
+        .collect();
     Outcome {
         total_bytes: mix.len(),
         bytes: st.iter().map(|s| (s.total + 1024) / 2048).collect(),
+        used_sets: st
+            .iter()
+            .map(|s| s.count.iter().filter(|&&n| n > 0).count())
+            .collect(),
+        averaged,
         weights: st.into_iter().map(|s| s.w).collect(),
     }
 }
@@ -358,5 +436,43 @@ mod tests {
         let twice = run(&net, &sur, (&ids, &bytes), &a, Some(&r.weights), true);
         assert_eq!(again.bytes, twice.bytes);
         assert_ne!(r.weights[1], f.weights[0]);
+        // panel V62: the step of V59 reproduces V59; a slower step gives other weights; the
+        // average differs from the last weights; a frozen arm's average is its own weights on
+        // the sets it used; the start mixer costs what the box table alone costs up to the
+        // rounding of the log-odds table
+        let mk = |gate, shift, init, frozen, average| Spec {
+            gate,
+            crushed_inputs: false,
+            shift,
+            init,
+            frozen,
+            average,
+        };
+        let v = run_specs(
+            &net,
+            &sur,
+            (&ids, &bytes),
+            &[
+                mk(Gate::Single, 14, None, false, true),
+                mk(Gate::Single, 18, None, false, true),
+                mk(Gate::Single, 14, Some(&r.weights[1]), true, true),
+                mk(Gate::BoxOnly, 14, None, true, false),
+                mk(Gate::Single, 14, None, true, false),
+                mk(Gate::Full, 14, Some(&r.weights[2]), true, true),
+            ],
+        );
+        assert_eq!(v.bytes[0], r.bytes[1]);
+        assert_eq!(v.weights[0], r.weights[1]);
+        assert_ne!(v.weights[1], v.weights[0]);
+        assert_ne!(v.averaged[0], v.weights[0]);
+        assert_eq!(v.averaged[2], r.weights[1]);
+        assert_eq!(v.used_sets[2], 1);
+        assert_eq!(v.bytes[4], f.bytes[0]);
+        let gap = (v.bytes[4] - v.bytes[3]).abs();
+        assert!(200 * gap <= v.bytes[3], "{} {}", v.bytes[4], v.bytes[3]);
+        for set in 0..9 {
+            let a = &v.averaged[5][set * 4..(set + 1) * 4];
+            assert!(a == &r.weights[2][set * 4..(set + 1) * 4] || a == [0, 0, 0, ONE]);
+        }
     }
 }
