@@ -5,6 +5,7 @@
 /// Copied unchanged from `JesseBrown1980/GGUF-files-operating-as-trained-quantum-neural-network-models`,
 /// `src/bigint.rs`, git blob `23f5447e352e9b8928281f341059d2f25f22bb60`.
 pub mod bigint;
+pub mod coherence;
 pub mod combined;
 pub mod lazy;
 pub mod loops;

@@ -26,6 +26,8 @@ pub enum BoxRule {
     NeuronVote,
     /// memory 64 with three autapses (delays 8, 64, 512) of this signed strength
     Autapse(i64),
+    /// memory 64 with one stickiness: the box held one byte ago gets cheaper by this much
+    Hold(i64),
 }
 
 pub const AUTAPSE_DELAYS: [usize; 3] = [8, 64, 512];
@@ -154,7 +156,7 @@ pub fn run(
         })
         .collect();
     let mut box_loops: Vec<Loop> = match box_rule {
-        BoxRule::Plain64 | BoxRule::Autapse(_) => vec![Loop::new(fan, 64)],
+        BoxRule::Plain64 | BoxRule::Autapse(_) | BoxRule::Hold(_) => vec![Loop::new(fan, 64)],
         _ => BOX_MEMORIES.iter().map(|&m| Loop::new(fan, m)).collect(),
     };
     let (mut idx, mut bits) = ([0u32; 8], [0u8; 8]);
@@ -188,6 +190,14 @@ pub fn run(
                 &box_ring,
                 i,
                 &AUTAPSE_DELAYS,
+                strength,
+                &mut scratch,
+            ),
+            BoxRule::Hold(strength) => fire_autapse(
+                &box_loops[0].sum,
+                &box_ring,
+                i,
+                &[1],
                 strength,
                 &mut scratch,
             ),
