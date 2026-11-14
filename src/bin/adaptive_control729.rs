@@ -127,10 +127,7 @@ fn load_and_train(
 }
 
 fn test_bytes(tails: &[Tail], rem: usize, shuffle: bool) -> Result<Vec<u8>, Box<dyn Error>> {
-    let mut group: Vec<&Tail> = tails
-        .iter()
-        .filter(|v| v.id % 9 == rem)
-        .collect();
+    let mut group: Vec<&Tail> = tails.iter().filter(|v| v.id % 9 == rem).collect();
     if shuffle {
         group.sort_unstable_by_key(|v| (h16(v.id as u32 ^ 0x2545_f491), v.id));
     } else {
@@ -176,8 +173,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     let baselines = reference()?;
     let costs = cost_table();
-    let (pretrained, nondefault, train_bytes, tails, stream_bytes) =
-        load_and_train(&args[1])?;
+    let (pretrained, nondefault, train_bytes, tails, stream_bytes) = load_and_train(&args[1])?;
     println!(
         "ADAPTIVE729|question=referee_vs_no_boxes_order2|stream_bytes={stream_bytes}|train_prefix_bytes={train_bytes}|train_tail_bytes=2048|trained_nondefault={nondefault}|context_keys={CONTEXTS}|changed_context_cap={CHANGE_CAP}|rate=4|score=original_integer_cost_table|bit_order=MSB|json=0"
     );
