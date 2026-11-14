@@ -1,0 +1,225 @@
+FABLE 5.2 STREAM 081 - eighty-one seconds - 2026-11-14 - encyclopedia, as it comes
+
+'''Brazil''' (Portuguese: ''Brasil''), officially the '''Federative Republic of Brazil''', is
+the largest country in [[South America]] and the fifth largest in the world by area. Its
+capital is [[Brasília]] and its largest city is [[São Paulo]]. It is bordered by the
+[[Atlantic Ocean]] on the east and has a coastline of 7,491 km. It borders every other
+South American country except [[Ecuador]] and [[Chile]].
+
+== History ==
+The land was inhabited by numerous tribal nations before the landing in 1500 of the explorer
+[[Pedro Álvares Cabral]], who claimed the area for [[Portugal]]. Brazil remained a Portuguese
+colony until 1808, when the capital of the empire was transferred from [[Lisbon]] to [[Rio de
+Janeiro]]. Independence was declared on 7 September 1822, and the country became a republic
+in 1889. The current constitution was adopted in 1988.
+
+== Geography ==
+The [[Amazon River]] is the largest river in the world by volume of water. The Amazon
+rainforest covers about 60% of the northern part of the country. The climate is mostly
+tropical; the south is temperate. The highest point is [[Pico da Neblina]] at 2,994 m.
+
+== Economy ==
+Brazil is one of the world's largest producers of coffee, soybeans, sugar, beef and iron ore.
+{| class="wikitable"
+|-
+! Sector !! Share of GDP !! Employment
+|-
+| Agriculture || 6.6% || 9.4%
+|-
+| Industry || 20.7% || 20.0%
+|-
+| Services || 72.7% || 70.6%
+|}
+
+== See also ==
+* [[List of Brazilian states]]
+* [[Portuguese language]]
+* [[Mercosur]]
+
+== External links ==
+* [http://www.brasil.gov.br Official website]
+* [http://www.ibge.gov.br Brazilian Institute of Geography and Statistics]
+
+[[Category:Brazil| ]] [[Category:Countries in South America]] [[Category:Federal republics]]
+
+'''Oxygen''' is a [[chemical element]] with symbol '''O''' and [[atomic number]] 8. It is a
+member of the [[chalcogen]] group on the [[periodic table]] and is a highly reactive
+[[nonmetal]]. By mass, oxygen is the third most abundant element in the universe, after
+[[hydrogen]] and [[helium]]. At standard temperature and pressure, two atoms of the element
+bind to form dioxygen, a colourless and odourless gas with the formula O<sub>2</sub>.
+Diatomic oxygen gas constitutes 20.8% of the [[Earth's atmosphere]].
+
+Oxygen was discovered independently by [[Carl Wilhelm Scheele]], in [[Uppsala]], in 1773 or
+earlier, and [[Joseph Priestley]] in [[Wiltshire]], in 1774. The name ''oxygen'' was coined in
+1777 by [[Antoine Lavoisier]], from the Greek roots ὀξύς (''oxys'', "acid") and -γενής
+(''-genes'', "producer").
+
+{{Infobox element
+| name = Oxygen
+| symbol = O
+| number = 8
+| mass = 15.999
+| phase = gas
+| melting point K = 54.36
+| boiling point K = 90.188
+}}
+
+'''William Shakespeare''' (baptised 26 April 1564 – died 23 April 1616) was an English
+[[poet]] and [[playwright]], widely regarded as the greatest writer in the [[English
+language]]. He is often called England's national poet and the "Bard of Avon". His surviving
+works consist of 38 [[play]]s, 154 [[sonnet]]s, two long narrative poems, and several other
+poems. His plays have been translated into every major living language.
+
+Shakespeare was born and raised in [[Stratford-upon-Avon]]. At the age of 18 he married
+[[Anne Hathaway]], who bore him three children: Susanna, and twins Hamnet and Judith. Between
+1585 and 1592 he began a successful career in [[London]] as an actor, writer, and part owner
+of the playing company the [[Lord Chamberlain's Men]], later known as the King's Men.
+
+=== Plays ===
+* ''[[Hamlet]]'' (c. 1600)
+* ''[[Macbeth]]'' (c. 1606)
+* ''[[King Lear]]'' (c. 1605)
+* ''[[Othello]]'' (c. 1603)
+* ''[[Romeo and Juliet]]'' (c. 1595)
+* ''[[A Midsummer Night's Dream]]'' (c. 1595)
+* ''[[The Tempest]]'' (c. 1611)
+
+'''World War II''', or the '''Second World War''', was a global military conflict that
+lasted from 1939 to 1945. It involved the vast majority of the world's nations, forming two
+opposing military alliances: the [[Allies of World War II|Allies]] and the [[Axis powers|
+Axis]]. It was the most widespread war in history, with more than 100 million military
+personnel mobilised. Over 60 million people, the majority of them civilians, were killed,
+making it the deadliest conflict in human history.
+
+The war is generally said to have begun on 1 September 1939, with the invasion of [[Poland]]
+by [[Germany]], and subsequent declarations of war on Germany by [[France]] and the [[United
+Kingdom]]. From late 1939 to early 1941, in a series of campaigns and treaties, Germany
+conquered or controlled much of continental Europe. In June 1941 the Axis launched an
+invasion of the [[Soviet Union]]. In December 1941 [[Japan]] attacked the [[United States]]
+at [[Pearl Harbor]]. The war in Europe ended with the surrender of Germany on 8 May 1945,
+and the war in Asia ended on 15 August 1945 when Japan agreed to surrender.
+
+'''Mathematics''' is the study of [[quantity]], [[structure]], [[space]], and [[change]].
+Mathematicians seek out patterns and formulate new [[conjecture]]s, which they resolve by
+[[mathematical proof]]. The word comes from the Greek μάθημα (''máthēma''), meaning
+"learning, study, science".
+
+A [[prime number]] is a natural number greater than 1 that has no positive divisors other
+than 1 and itself. The first primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
+47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97. There are infinitely many primes, as shown by
+[[Euclid]] around 300 BC. The [[fundamental theorem of arithmetic]] states that every
+integer greater than 1 is either prime itself or is the product of prime numbers, and that
+this product is unique up to the order of the factors.
+
+:<math>e^{i\pi} + 1 = 0</math>
+:<math>\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}</math>
+:<math>\int_0^1 x^2\,dx = \frac{1}{3}</math>
+:<math>a^2 + b^2 = c^2</math>
+
+'''The Beatles''' were an English [[rock music|rock]] band formed in [[Liverpool]] in 1960.
+The line-up of [[John Lennon]], [[Paul McCartney]], [[George Harrison]] and [[Ringo Starr]]
+is regarded as the most influential band of all time. Their albums include ''[[Please
+Please Me]]'' (1963), ''[[Rubber Soul]]'' (1965), ''[[Revolver (album)|Revolver]]'' (1966),
+''[[Sgt. Pepper's Lonely Hearts Club Band]]'' (1967) and ''[[Abbey Road]]'' (1969). The band
+broke up in 1970.
+
+'''Tokyo''' (東京, ''Tōkyō'') is the capital of [[Japan]] and one of its 47 prefectures. The
+Greater Tokyo Area is the most populous metropolitan area in the world, with over 35 million
+people. It is located on the eastern side of the main island [[Honshū]]. The city was
+originally a small fishing village named [[Edo]]. In 1868 the emperor moved there from
+[[Kyoto]] and the city was renamed. Tokyo hosted the [[1964 Summer Olympics]].
+
+'''Football''' (also known as '''association football''' or '''soccer''') is a team sport
+played between two teams of eleven players with a spherical ball. It is played by 250
+million players in over 200 countries, making it the world's most popular sport. The game
+is played on a rectangular field with a goal at each end. The object of the game is to
+score by getting the ball into the opposing goal. The [[FIFA World Cup]] has been held
+every four years since 1930, except in 1942 and 1946.
+
+{| class="wikitable sortable"
+! Year !! Host !! Winner !! Score !! Runner-up
+|-
+| 1930 || Uruguay || Uruguay || 4–2 || Argentina
+|-
+| 1950 || Brazil || Uruguay || 2–1 || Brazil
+|-
+| 1958 || Sweden || Brazil || 5–2 || Sweden
+|-
+| 1970 || Mexico || Brazil || 4–1 || Italy
+|-
+| 1994 || United States || Brazil || 0–0 (3–2 pen.) || Italy
+|-
+| 2002 || South Korea/Japan || Brazil || 2–0 || Germany
+|}
+
+'''DNA''', or '''deoxyribonucleic acid''', is a [[nucleic acid]] that contains the genetic
+instructions used in the development and functioning of all known living [[organism]]s. The
+DNA segments that carry this genetic information are called [[gene]]s. Chemically, DNA
+consists of two long [[polymer]]s of simple units called [[nucleotide]]s, with backbones
+made of sugars and phosphate groups. The four bases are [[adenine]] (A), [[cytosine]] (C),
+[[guanine]] (G) and [[thymine]] (T). The structure of DNA was first described by [[James D.
+Watson]] and [[Francis Crick]] in 1953.
+
+'''Linux''' is a [[Unix-like]] computer [[operating system]] assembled under the model of
+[[free and open source software]] development and distribution. The defining component is
+the [[Linux kernel]], first released on 5 October 1991 by [[Linus Torvalds]]. Linux runs on
+a wide variety of hardware, from [[mobile phone]]s and [[tablet computer]]s to
+[[mainframe]]s and [[supercomputer]]s.
+
+<ref name="smith2001">{{cite web |url=http://www.example.org/history.html |title=A Short
+History |author=Smith, John |date=2001-05-12 |accessdate=2006-02-18}}</ref>
+<ref>Jones, p. 114.</ref> <ref>''Ibid.'', pp. 201–203.</ref> <!-- unsourced, please check -->
+{{main|History of Europe}} {{see also|Roman Empire}} {{citation needed|date=March 2006}}
+{{reflist}} {{DEFAULTSORT:Einstein, Albert}} {{Persondata}} {{commons|Tokyo}}
+[[Category:1879 births]] [[Category:1955 deaths]] [[Category:Nobel laureates in Physics]]
+[[Category:Capitals in Asia]] [[Category:Chemical elements]] [[Category:English poets]]
+
+'''January''' is the first month of the year in the [[Gregorian calendar]] and has 31 days.
+'''February''' has 28 days, or 29 in a [[leap year]]. '''March''', '''April''', '''May''',
+'''June''', '''July''', '''August''', '''September''', '''October''', '''November''' and
+'''December''' follow. A week has seven days: Monday, Tuesday, Wednesday, Thursday, Friday,
+Saturday and Sunday.
+
+'''Events'''
+* [[1066]] – [[William the Conqueror]] is crowned King of England.
+* [[1492]] – [[Christopher Columbus]] reaches the [[Americas]].
+* [[1776]] – The [[United States Declaration of Independence]] is adopted.
+* [[1789]] – The [[French Revolution]] begins with the storming of the [[Bastille]].
+* [[1815]] – [[Napoleon]] is defeated at the [[Battle of Waterloo]].
+* [[1914]] – Archduke [[Franz Ferdinand]] is assassinated in [[Sarajevo]].
+* [[1969]] – [[Apollo 11]] lands on the [[Moon]]; [[Neil Armstrong]] is the first to walk on it.
+* [[1989]] – The [[Berlin Wall]] falls.
+
+'''Births'''
+* [[1452]] – [[Leonardo da Vinci]], Italian painter and inventor (d. [[1519]])
+* [[1643]] – [[Isaac Newton]], English physicist and mathematician (d. [[1727]])
+* [[1756]] – [[Wolfgang Amadeus Mozart]], Austrian composer (d. [[1791]])
+* [[1809]] – [[Charles Darwin]], English naturalist (d. [[1882]])
+* [[1867]] – [[Marie Curie]], Polish-French physicist and chemist (d. [[1934]])
+
+'''Deaths'''
+* [[1616]] – [[Miguel de Cervantes]], Spanish writer (b. [[1547]])
+* [[1827]] – [[Ludwig van Beethoven]], German composer (b. [[1770]])
+* [[1865]] – [[Abraham Lincoln]], 16th President of the United States (b. [[1809]])
+
+The '''elephant''' is a large [[mammal]] of the family Elephantidae. Three species are
+recognised: the [[African bush elephant]], the [[African forest elephant]] and the [[Asian
+elephant]]. Elephants are the largest living land animals. Males can reach a height of
+4 m and weigh 7,000 kg. They live for 60 to 70 years. They are [[herbivore|herbivorous]]
+and can be found in savannahs, forests, deserts and marshes.
+
+'''Philosophy''' is the study of general and fundamental problems concerning matters such
+as [[existence]], [[knowledge]], [[value (ethics)|values]], [[reason]], [[mind]] and
+[[language]]. The word comes from the Greek φιλοσοφία (''philosophia''), which literally
+means "love of wisdom". [[Socrates]], [[Plato]] and [[Aristotle]] are the best known of the
+ancient Greek philosophers. [[René Descartes]] wrote ''Cogito ergo sum'' — "I think,
+therefore I am". [[Immanuel Kant]] published the ''[[Critique of Pure Reason]]'' in 1781.
+
+The '''Sun''' is the [[star]] at the centre of the [[Solar System]]. It has a diameter of
+about 1,392,000 km, about 109 times that of [[Earth]], and its mass (about 2×10<sup>30</sup>
+kilograms) accounts for about 99.86% of the total mass of the Solar System. About three
+quarters of the Sun's mass consists of [[hydrogen]], while the rest is mostly [[helium]].
+The eight planets are [[Mercury (planet)|Mercury]], [[Venus]], [[Earth]], [[Mars]],
+[[Jupiter]], [[Saturn]], [[Uranus]] and [[Neptune]].
+
+end of stream 081.

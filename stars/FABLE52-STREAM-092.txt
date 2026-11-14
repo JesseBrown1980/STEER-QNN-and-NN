@@ -1,0 +1,264 @@
+FABLE 5.2 STREAM 092 - ninety-two seconds - 2026-11-14 - programs, shells, tables, numbers
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node {
+    int key;
+    struct node *left;
+    struct node *right;
+} node_t;
+
+static node_t *insert(node_t *root, int key) {
+    if (root == NULL) {
+        node_t *n = malloc(sizeof(node_t));
+        n->key = key;
+        n->left = n->right = NULL;
+        return n;
+    }
+    if (key < root->key) root->left = insert(root->left, key);
+    else if (key > root->key) root->right = insert(root->right, key);
+    return root;
+}
+
+int main(int argc, char **argv) {
+    node_t *root = NULL;
+    for (int i = 1; i < argc; i++) root = insert(root, atoi(argv[i]));
+    printf("done: %d keys\n", argc - 1);
+    return 0;
+}
+
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::{self, BufRead, BufReader, Write};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Trit { Neg = -1, Zero = 0, Pos = 1 }
+
+impl Trit {
+    pub fn from_i8(v: i8) -> Option<Self> {
+        match v {
+            -1 => Some(Trit::Neg),
+            0 => Some(Trit::Zero),
+            1 => Some(Trit::Pos),
+            _ => None,
+        }
+    }
+}
+
+pub fn to_balanced(mut n: i64) -> Vec<Trit> {
+    let mut out = Vec::new();
+    while n != 0 {
+        let r = n.rem_euclid(3);
+        let (t, carry) = if r == 2 { (Trit::Neg, 1) } else if r == 1 { (Trit::Pos, 0) } else { (Trit::Zero, 0) };
+        out.push(t);
+        n = n.div_euclid(3) + carry;
+    }
+    out
+}
+
+fn main() -> io::Result<()> {
+    let file = File::open("rows.hbp")?;
+    let mut counts: HashMap<String, u64> = HashMap::new();
+    for line in BufReader::new(file).lines() {
+        let line = line?;
+        let tag = line.split('|').next().unwrap_or("").to_string();
+        *counts.entry(tag).or_insert(0) += 1;
+    }
+    let mut out = io::stdout().lock();
+    for (tag, n) in &counts {
+        writeln!(out, "COUNT|tag={}|rows={}|json=0", tag, n)?;
+    }
+    Ok(())
+}
+
+import os
+import sys
+import hashlib
+from collections import Counter, defaultdict
+
+class Reader:
+    def __init__(self, order=2):
+        self.order = order
+        self.seen = defaultdict(int)
+        self.hit = defaultdict(int)
+
+    def cost(self, ctx, sym):
+        s, h = self.seen[ctx], self.hit[(ctx, sym)]
+        self.seen[ctx] += 1
+        self.hit[(ctx, sym)] += 1
+        return log2_256(s + 256) - log2_256(h + 1)
+
+def sha256_file(path, block=1 << 20):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while True:
+            b = f.read(block)
+            if not b:
+                break
+            h.update(b)
+    return h.hexdigest()
+
+if __name__ == "__main__":
+    for p in sys.argv[1:]:
+        print("%s *%s" % (sha256_file(p), os.path.basename(p)))
+
+function debounce(fn, wait) {
+  let timer = null;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+const rows = text.split("\n").filter((r) => r.length > 0).map((r) => r.split("|"));
+export async function fetchRows(url) {
+  const res = await fetch(url, { method: "GET", headers: { Accept: "text/plain" } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return (await res.text()).trim().split("\n");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stars</title>
+  <style>
+    :root { --bg: #ffffff; --fg: #111111; }
+    body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg); font-family: sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { border: 1px solid #cccccc; padding: 4px 8px; text-align: right; }
+  </style>
+</head>
+<body>
+  <h1>Stars</h1>
+  <table><tr><th>Star</th><th>Lit</th><th>Hits</th></tr>
+  <tr><td>MYTHOS</td><td>109</td><td>204389</td></tr>
+  <tr><td>FABLE52</td><td>106</td><td>207001</td></tr></table>
+  <p>See <a href="README.md">the map</a>.</p>
+</body>
+</html>
+
+SELECT s.name, COUNT(*) AS n, SUM(r.bytes) AS total
+FROM stars s JOIN rows r ON r.star_id = s.id
+WHERE r.created_at >= '2026-11-01' AND r.status = 'OK'
+GROUP BY s.name HAVING COUNT(*) > 10 ORDER BY total DESC LIMIT 20;
+
+CREATE TABLE rooms (id BIGINT PRIMARY KEY, sector INT NOT NULL, value BYTEA NOT NULL);
+INSERT INTO rooms (id, sector, value) VALUES (1, 0, '\x0000000000000000');
+UPDATE rooms SET sector = sector + 1 WHERE id BETWEEN 100 AND 200;
+
+$ ls -la
+total 48
+drwxr-xr-x  6 acer acer 4096 Nov 14 17:59 .
+drwxr-xr-x 12 acer acer 4096 Nov 13 09:12 ..
+-rw-r--r--  1 acer acer 9403 Nov 14 17:37 RESULT-STAREDIT-V68.hbp
+-rw-r--r--  1 acer acer 5457 Nov 14 17:57 FABLE52-STREAM-EMISSION-1.txt
+-rwxr-xr-x  1 acer acer 6875 Jul 27 19:29 stream_star.py
+$ grep -c "^SET" results/RESULT-STAREDIT-V68.hbp
+54
+$ wc -l README.md
+     212 README.md
+$ df -h /mnt/d
+Filesystem      Size  Used Avail Use% Mounted on
+D:\             932G  611G  321G  66% /mnt/d
+$ ps aux | head -3
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.1  21892  9120 ?        Ss   09:02   0:01 /sbin/init
+acer      1042  3.1  2.4 912340 98112 pts/0    Sl   17:34   0:12 python tools/star_edit.py
+$ echo $?
+0
+
+PS C:\Users\acer> Get-Process python | Select-Object Id, CPU, WorkingSet64
+PS C:\Users\acer> Get-ChildItem D:\asolaria-absorb -Recurse -Filter *.gguf | Measure-Object Length -Sum
+PS C:\Users\acer> Test-Path C:\tmp\opus55\steer\results\SHA256SUMS
+True
+
+[package]
+name = "tribit"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.81"
+
+[dependencies]
+sha2 = "0.10"
+
+[profile.release]
+opt-level = 3
+lto = true
+
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.81
+        with:
+          components: clippy, rustfmt
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace -- -D warnings
+      - run: cargo test --workspace
+
+Traceback (most recent call last):
+  File "tools/star_edit.py", line 61, in table
+    row = [r for r in open(spec).read().split("
+SyntaxError: unterminated string literal (detected at line 61)
+
+error[E0308]: mismatched types
+  --> src/lib.rs:42:17
+   |
+42 |     let n: u32 = x.len();
+   |            ---   ^^^^^^^ expected `u32`, found `usize`
+   |
+help: you can convert a `usize` to a `u32` and panic if the converted value doesn't fit
+
+warning: unused variable: `carry`
+error: aborting due to previous error; 1 warning emitted
+
+  n   n^2    n^3     2^n        3^n   n!
+  1     1      1       2          3    1
+  2     4      8       4          9    2
+  3     9     27       8         27    6
+  4    16     64      16         81    24
+  5    25    125      32        243    120
+  6    36    216      64        729    720
+  7    49    343     128       2187    5040
+  8    64    512     256       6561    40320
+  9    81    729     512      19683    362880
+ 10   100   1000    1024      59049    3628800
+
+3.14159265358979323846 2.71828182845904523536 1.41421356237309504880 1.61803398874989484820
+1,000,081 = 1000081; 19683 = 3^9; 59049 = 3^10; 177147 = 3^11; 531441 = 3^12; 1594323 = 3^13
+0.1 + 0.2 != 0.3 in float; 1/10 + 2/10 == 3/10 in fractions. integer, with the remainder carried.
+
+GET /api/search.hbp?q=star HTTP/1.1
+Host: 127.0.0.1:4796
+Accept: text/plain
+
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Content-Length: 182
+
+path|pid|bh|off|len
+D:/asolaria-absorb/kernel-pump/KIMI-K3-STAR.txt|a1b2c3d4e5f60718|1720|0|3110
+
+diff --git a/tools/star_edit.py b/tools/star_edit.py
+index 3f2a1bc..9d4e7aa 100644
+--- a/tools/star_edit.py
++++ b/tools/star_edit.py
+@@ -58,7 +58,7 @@ def table():
+     spec = os.path.join(HERE, "..", "specs", "SPEC-STAREDIT-V68-ADDENDUM-1.hbp")
+-    row = [r for r in open(spec).read().split("\n") if r.startswith("SE68A1TABLE|")][0]
++    row = [r for r in open(spec).read().splitlines() if r.startswith("SE68A1TABLE|")][0]
+     out = []
+
+// TODO: carry the remainder; FIXME: never float here; NOTE: reuse tribit/mod.rs via #[path]
+/* the watcher does not write. the watcher only reads and says. */
+# end of stream 092

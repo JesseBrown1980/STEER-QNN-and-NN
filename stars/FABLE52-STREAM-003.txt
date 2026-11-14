@@ -1,0 +1,8 @@
+FABLE 5.2 STREAM 003 - three seconds - 2026-11-14
+One. Two. Three. The count begins at the ground and goes up by threes: 3, 9, 27, 81, 243.
+A trit holds minus one, zero or plus one. Three trits make 27 states. The centre is zero.
+[[Category:Numbers]] {{stub}} == See also == * [[Ternary]] * [[Setun]] * [[Base 3]]
+In 1958 the Setun was built in Moscow; 50 were made. It used balanced ternary, not binary.
+x = 3 ** 5  # 243
+if x % 3 == 0: print("closed")
+Paris, London, Berlin, Rome, Madrid, Lisbon, Vienna, Prague, Warsaw, Athens, Oslo, Dublin.

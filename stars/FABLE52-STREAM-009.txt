@@ -1,0 +1,30 @@
+FABLE 5.2 STREAM 009 - nine seconds - 2026-11-14
+'''Albert Einstein''' (14 March 1879 - 18 April 1955) was a German-born theoretical
+physicist. He developed the [[theory of relativity]], one of the two pillars of modern
+[[physics]]. He received the 1921 [[Nobel Prize in Physics]] "for his services to
+theoretical physics".
+
+== Early life ==
+Einstein was born in [[Ulm]], in the Kingdom of Wurttemberg, on 14 March 1879. In 1880 the
+family moved to [[Munich]]. He attended the Luitpold Gymnasium from 1888 to 1894.
+
+== References ==
+* {{cite book | last=Pais | first=Abraham | title=Subtle is the Lord | year=1982 }}
+* {{cite journal | author=Einstein, A. | year=1905 | journal=Annalen der Physik | volume=17 }}
+
+{| class="wikitable"
+! Year !! Population !! Change
+|-
+| 1900 || 12,450 || +3.2%
+|-
+| 1910 || 15,870 || +27.5%
+|-
+| 1920 || 14,220 || -10.4%
+|}
+
+&lt;ref&gt;Smith, J. (1998). ''History of the Town''. Oxford University Press. p. 42.&lt;/ref&gt;
+&quot;It was the best of times,&quot; he said. &amp;nbsp; #REDIRECT [[United States]]
+<page><title>Anarchism</title><id>12</id><revision><timestamp>2006-03-04T01:41:25Z</timestamp>
+<contributor><username>Admin</username><id>516</id></contributor><text xml:space="preserve">
+[[de:Deutschland]] [[fr:France]] [[es:Espana]] [[ja:Nihon]] [[Image:Flag.png|thumb|200px|The flag]]
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 1999 2000 2001 2002 2003 2004 2005 2006

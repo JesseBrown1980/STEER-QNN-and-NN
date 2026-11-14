@@ -1,0 +1,71 @@
+FABLE 5.2 STREAM 027 - twenty-seven seconds - 2026-11-14 - the kind of rows a system writes
+HDR|spec=EXAMPLE|seat=ACER-CLAUDE-FABLE52|pid=61089a99becaa89b|date=2026-11-14|json=0
+ROW|name=alpha|bytes=4096|sha256=9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08|status=OK|json=0
+ROW|name=beta|bytes=8192|sha256=60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752|status=OK|json=0
+ROW|name=gamma|bytes=16384|sha256=fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca13|status=HOLD|json=0
+EMIT|family=star|name=watcher|pid=8467a937cba309f7|hilbert=1720|g1024=503|owner=OP-JESSE
+EMIT|family=star|name=mythos|pid=be80843b5ce5de04|hilbert=1721|g1024=504|owner=OP-JESSE
+RESULT|text=TEXT_WIKI|arm=FLAT|lights=5|cost=1204751234|per_100000_of_PREV=99988|json=0
+RESULT|text=TEXT_ASOLARIA|arm=FLAT|lights=5|cost=1199239482|per_100000_of_PREV=100014|json=0
+JUDGE|prediction=P1|outcome=MET|value=106|tag=MEASURED|json=0
+JUDGE|prediction=P2|outcome=MISSED|value=2.07|tag=MEASURED|json=0
+
+2026-11-14T17:59:04Z INFO  kernel: room 000127 opened, sector 12, offset 0x0001F400
+2026-11-14T17:59:04Z INFO  kernel: read 8 bytes, crc ok, trits=27, ground=0
+2026-11-14T17:59:05Z WARN  bus: lane 4947 slow, 1250 ms, retry 1 of 3
+2026-11-14T17:59:06Z INFO  bus: lane 4947 ok, 12 ms
+2026-11-14T17:59:07Z ERROR recall: GET /api/search.hbp?q=weight+space -> 0 rows
+2026-11-14T17:59:08Z INFO  fabric: council_query sent, seats=9, answered=9, fallback=0
+2026-11-14T17:59:09Z DEBUG host8: rooms=12500000000 bad=0 files=125 extents=243
+
+fn prism(x: &[i64; 27]) -> [i64; 27] {
+    let mut out = [0i64; 27];
+    for (i, v) in x.iter().enumerate() {
+        out[i] = (v * ROOT[i % 3]).rem_euclid(1_000_081);
+    }
+    out
+}
+
+#[test]
+fn roundtrip_is_exact() {
+    let x: [i64; 27] = core::array::from_fn(|i| i as i64 - 13);
+    assert_eq!(unprism(&prism(&x)), x);
+}
+
+$ cargo +1.81 clippy --release -- -D warnings
+    Checking tribit v0.1.0 (C:\asolaria-acer\asolaria-os\kernel\core)
+    Finished `release` profile [optimized] target(s) in 4.21s
+$ git status -sb
+## main...origin/main
+$ git log --oneline -3
+0b3e99a SHA256SUMS: file names relative to results, as before
+311e3c7 V68 result and judgement
+6e5acb0 V68 program: PROGRAMMED arms, HITS, DIRECT and table score
+
+def cumcount(keys):
+    order = np.argsort(keys, kind="stable")
+    sk = keys[order]
+    first = np.ones(len(sk), dtype=bool)
+    first[1:] = sk[1:] != sk[:-1]
+    return order, first
+
+{"name": "example", "version": "0.1.0", "private": true, "scripts": {"test": "node test.mjs"}}
+{"id": 1, "ok": true, "items": [3, 9, 27, 81, 243], "note": "cold lane only"}
+
+C:\Users\acer\AppData\Local\Temp\claude\scratchpad\judge.py
+D:\asolaria-absorb\kernel-pump\stars\deepseek-v4\manifest.hbp
+/mnt/c/asolaria-acer/claims-gate/AGENT-DISCIPLINE.md
+http://127.0.0.1:4796/api/search.hbp?q=star
+https://github.com/JesseBrown1980/STEER-QNN-and-NN/blob/main/README.md
+
+| V66 | Five stars played as a chain | A played star carries a function | 3 of 6 | JUDGE-V66 |
+| V67 | Fibres, seen and heard light | The shared hash does the work | 5 of 6 | JUDGE-V67 |
+| V68 | Weight editing on the stars | The hand edit raises right guesses | 9 of 14 | JUDGE-V68 |
+
+0x00 0x01 0x02 0x03 0x1F 0x20 0x7F 0x80 0xFF 0000 0001 0010 0011 0100 0101 0110 0111 1000
+-13 -12 -11 -10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +10 +11 +12 +13
+T0T +0- -+0 000 +++ --- 0+0 0-0 +-+ -+- T00 00T 0T0 +00 00+ 0+- -0+ +0- 0-+ -+0 +-0
+
+TAG|k=v|k=v|k=v|json=0
+MEASURED|NAMED|CONJECTURE|CANNOT_SEE|OPEN|HOLD|MET|MISSED|PASSED|EXACT|NOT_RUN|PENDING
+E=0. E=0. E=0. nothing is started without the operator's word. end of stream 027.
