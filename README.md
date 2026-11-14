@@ -61,6 +61,7 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V62 | Is a trained-then-frozen mixer bad because of the snapshot or a fault? | sealed; program not yet written | – | `SPEC-FROZEN729-V62` |
 | V63 | The strongest results on test texts that share no factor with the powers of three (`j mod 11`; then `j mod 27` against `j mod 29`) | **Carry over:** referee 8.8% and 8.2% on mod 11; on 27 against 29 the referee agrees to 0.02 points (7.20% and 7.22%) and the 1/16 core holds | 3 of 3; 4 of 4; 3 of 4 | `JUDGE-PRIMESPLIT729-V63`, `-A1`, `-A2` |
 | V64 | A formula from the trime/prime ladder (3/5, 9/11, 27/29) | **No curve in spacing for the guide** (scatter of about a point between texts). The referee's gain rises with length and levels off: about `9766 n/(n+248)` per 100,000 in stream order, n in tails; shape not distinguished from a logarithm | 0 of 2 judged | `JUDGE-LADDERFORMULA729-V64` |
+| V65 | Do the functions farmed from the system GGUF (81-byte records seen at least twice) look like trained weights? | **Not shown on five statistics of shape** (1 of 5). Trained weights look almost like noise as numbers; the functions look like structured text. The functions are 2.7% of the records, cover 23% of the body and are more structured than once-only records. Whether they *work* as weights is the next test | operator's prediction missed; seat 3 of 3 | `JUDGE-FUNCTIONWEIGHTS729-V65` |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -160,7 +161,7 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (98 of 154 met through V64). They are sealed first for that
+- **Seat predictions miss often** (101 of 157 met through V65). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
 - **The stickiness formula was a coincidence** (V60): 4,019 against 4,096 compared the

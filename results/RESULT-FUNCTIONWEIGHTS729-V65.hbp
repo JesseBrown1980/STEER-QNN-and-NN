@@ -1,0 +1,12 @@
+FARM|records=21220129|distinct=16910592|seen_once=16333376|distinct_tied_(functions)=577216|records_the_functions_cover=4886753|largest_count=26716|seconds=72|json=0
+WEIGHTS_FROM|encoder.layer.0.attention.output.dense.weight:384_rows|encoder.layer.0.attention.self.key.weight:384_rows|encoder.layer.0.attention.self.query.weight:384_rows|encoder.layer.0.attention.self.value.weight:384_rows|encoder.layer.0.intermediate.dense.weight:1536_rows|encoder.layer.0.output.dense.weight:384_rows|encoder.layer.1.attention.output.dense.weight:384_rows|encoder.layer.1.attention.self.key.weight:256_rows|json=0
+BODY|name=FUNCTIONS|rows=4096|columns=81|distinct_values=193|M1_OFF_CENTRE=3868|M2_KURTOSIS=3113|M3_TOP_VALUE=163|M4_NEIGHBOUR=493|M5_DIMENSIONS=12538|json=0
+BODY|name=ONCE|rows=4096|columns=81|distinct_values=229|M1_OFF_CENTRE=5839|M2_KURTOSIS=3582|M3_TOP_VALUE=65|M4_NEIGHBOUR=504|M5_DIMENSIONS=21022|json=0
+BODY|name=RANDOM|rows=4096|columns=81|distinct_values=256|M1_OFF_CENTRE=0|M2_KURTOSIS=1797|M3_TOP_VALUE=4|M4_NEIGHBOUR=0|M5_DIMENSIONS=79410|json=0
+BODY|name=WEIGHTS|rows=4096|columns=81|distinct_values=197|M1_OFF_CENTRE=0|M2_KURTOSIS=7369|M3_TOP_VALUE=101|M4_NEIGHBOUR=1|M5_DIMENSIONS=70202|json=0
+VERDICT|measure=M1_OFF_CENTRE|FUNCTIONS=3868|ONCE=5839|RANDOM=0|WEIGHTS=0|looks_like_weights=0|farming_moves_toward_weights=1|json=0
+VERDICT|measure=M2_KURTOSIS|FUNCTIONS=3113|ONCE=3582|RANDOM=1797|WEIGHTS=7369|looks_like_weights=0|farming_moves_toward_weights=0|json=0
+VERDICT|measure=M3_TOP_VALUE|FUNCTIONS=163|ONCE=65|RANDOM=4|WEIGHTS=101|looks_like_weights=1|farming_moves_toward_weights=0|json=0
+VERDICT|measure=M4_NEIGHBOUR|FUNCTIONS=493|ONCE=504|RANDOM=0|WEIGHTS=1|looks_like_weights=0|farming_moves_toward_weights=1|json=0
+VERDICT|measure=M5_DIMENSIONS|FUNCTIONS=12538|ONCE=21022|RANDOM=79410|WEIGHTS=70202|looks_like_weights=0|farming_moves_toward_weights=0|json=0
+OVERALL|measures_saying_looks_like_weights=1_of_5|rule=SHOWN_at_4_or_more|outcome=NOT_SHOWN|json=0
