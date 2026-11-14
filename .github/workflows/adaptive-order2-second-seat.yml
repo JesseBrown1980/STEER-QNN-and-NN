@@ -1,0 +1,46 @@
+name: Second-seat plain adaptive order2 refutation instrument
+on:
+  pull_request:
+    paths:
+      - 'specs/SPEC-ADAPTIVE729-SECOND-SEAT-20261114.md'
+      - 'src/adaptive_control.rs'
+      - 'src/bin/adaptive_control729.rs'
+      - 'src/lib.rs'
+      - 'reviews/SECOND-SEAT-ADAPTIVE729-CONTROL-20261114.md'
+      - '.github/workflows/adaptive-order2-second-seat.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-instrument:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.81.0
+          components: clippy
+      - name: Check frozen original V57 comparator, not synthetic copy
+        run: |
+          set -euo pipefail
+          test "$(git hash-object results/RESULT-COMBINED729-V57.hbp)" = 89eaf0ba312975a029f51cf4dec6e5c976c579e8
+          grep -Fq 'Sealed numerical predictions: none' specs/SPEC-ADAPTIVE729-SECOND-SEAT-20261114.md
+          grep -Fq 'REAL_STREAM=NOT_RUN' specs/SPEC-ADAPTIVE729-SECOND-SEAT-20261114.md
+      - name: Run independent no-guide online model's synthetic tests
+        run: |
+          set -euo pipefail
+          cargo test --offline --lib adaptive_control -- --nocapture
+          cargo run --offline --bin adaptive_control729 -- --self-test | tee adaptive-control-selftest.hbp
+          grep -Fq 'original_V57_rows=8|bit_cost_2048=256|change_cap=5800000|contexts=16777216|real_stream=NOT_RUN|refutation=UNDETERMINED|json=0' adaptive-control-selftest.hbp
+      - name: Strict Rust 1.81 clippy, all targets
+        run: |
+          set -euo pipefail
+          cargo clippy --offline --all-targets -- -D warnings
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: adaptive-order2-second-seat-instrument
+          path: adaptive-control-selftest.hbp
+          if-no-files-found: ignore
+          retention-days: 60
