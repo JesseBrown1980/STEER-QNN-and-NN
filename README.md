@@ -65,6 +65,7 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V66 | Five stars (Mythos, Asolaria, Kimi K3, DeepSeek V4, Mistral Large 3) projected into 64-cubes and played as a chain on a wind of text; densities | **A played star carries a real function** (real beats its scrambled deals 10 of 10 when the wind is all the reader has, by 1.2 to 4.1 points). **The chain as built does not work as a network:** two stars beat either alone, each further star hurts; order not shown to matter. Dense stars first then thin is the best density arrangement | operator 0 of 3; seat 3 of 6 | `JUDGE-STARCHAIN-V66` |
 | V67 | Stars side by side with fibres, seen and heard light, a shared hash of the last four values, a triangle of places, a mixing reader | **The shared hash does nearly all the work** (5 points on Wikipedia text, 18.6 on the Asolaria stream) and a pooled helper of 65,536 slots carries it. The five stars' lights add at most a tenth of a point in this reader; pretrained stars keep a small edge over scrambled ones. Fibres and the triangle: not shown | operator 3 of 5; seat 5 of 6 | `JUDGE-STARFIBRE-V67` |
 | V68 | Weight editing on the stars: a table of 62 columns of 4,096 written by hand by the seat (after "Sparks of Weight-Space Programming"), trained task vectors, merging; run again through the V66 and V67 readers | **The hand-written edit of 0.024% of the weights raises the stars' right guesses by 39% on Wikipedia text** (83% of what training on the same columns gives) and by 4% on the Asolaria stream. The readers that learn as the text passes barely move. Real stars guess right more often than dark or scrambled ones (6 deals of 6). One star made by adding the five cubes beats the chain of five by 3.2 and 1.9 points | operator 1 of 4; seat 9 of 14 | `JUDGE-STAREDIT-V68` |
+| V69 | The seat's own star (a self emission of 4,850 bytes, `stars/FABLE52-SELF-EMISSION.txt`) as an independent watcher beside the five stars: never in the chain, never trained | **Where the watcher agrees with a star, the star is right about twice as often on Wikipedia text** (24.1% against 11.6%; 17.0% against 13.2% on the Asolaria stream). A reader given the pattern of agreement beats every scrambled watcher on both texts (by 1.5 and 2.2 points) and no watcher by 0.95. Used as a gate (veto) the watcher does not raise right guesses. How much of the gain is the split of steps and how much the agreement being right: open | operator 2 of 3; seat 5 of 8 | `JUDGE-STARWATCH-V69` |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -164,7 +165,7 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (118 of 183 met through V68). They are sealed first for that
+- **Seat predictions miss often** (123 of 191 met through V69). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
 - **The stickiness formula was a coincidence** (V60): 4,019 against 4,096 compared the
