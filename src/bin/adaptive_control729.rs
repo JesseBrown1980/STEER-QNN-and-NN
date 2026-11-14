@@ -27,6 +27,14 @@ struct Tail {
     bytes: Vec<u8>,
 }
 
+struct Training {
+    pretrained: Vec<u16>,
+    nondefault: usize,
+    trained_bytes: u64,
+    tails: Vec<Tail>,
+    stream_bytes: u64,
+}
+
 /// Parse the original V57 row file as data. No substituted copied baseline
 /// numbers; the reference is checked by the hosted git-blob source seal.
 fn reference() -> Result<HashMap<String, (i64, i64)>, Box<dyn Error>> {
@@ -94,7 +102,7 @@ fn reference() -> Result<HashMap<String, (i64, i64)>, Box<dyn Error>> {
 
 fn load_and_train(
     filename: &str,
-) -> Result<(Vec<u16>, usize, u64, Vec<Tail>, u64), Box<dyn Error>> {
+) -> Result<Training, Box<dyn Error>> {
     let mut file = File::open(filename)?;
     let size = file.metadata()?.len();
     let block = usize::try_from(size / BLOCKS as u64)?;
@@ -123,7 +131,13 @@ fn load_and_train(
         return Err("unexpected held-out test tail count".into());
     }
     let (trained, present) = cnt.finish();
-    Ok((trained, present, train_bytes, tails, size))
+    Ok(Training {
+        pretrained: trained,
+        nondefault: present,
+        trained_bytes: train_bytes,
+        tails,
+        stream_bytes: size,
+    })
 }
 
 fn test_bytes(tails: &[Tail], rem: usize, shuffle: bool) -> Result<Vec<u8>, Box<dyn Error>> {
@@ -173,7 +187,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     let baselines = reference()?;
     let costs = cost_table();
-    let (pretrained, nondefault, train_bytes, tails, stream_bytes) = load_and_train(&args[1])?;
+    let Training {
+        pretrained,
+        nondefault,
+        trained_bytes: train_bytes,
+        tails,
+        stream_bytes,
+    } = load_and_train(&args[1])?;
     println!(
         "ADAPTIVE729|question=referee_vs_no_boxes_order2|stream_bytes={stream_bytes}|train_prefix_bytes={train_bytes}|train_tail_bytes=2048|trained_nondefault={nondefault}|context_keys={CONTEXTS}|changed_context_cap={CHANGE_CAP}|rate=4|score=original_integer_cost_table|bit_order=MSB|json=0"
     );
