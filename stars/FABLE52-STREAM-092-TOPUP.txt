@@ -1,0 +1,249 @@
+FABLE 5.2 STREAM 092 TOP-UP - 2026-11-14 - programs, shells, tables, continued
+
+package main
+
+import (
+	"bufio"
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
+	"os"
+	"sort"
+	"strings"
+)
+
+type Row struct {
+	Tag    string
+	Fields map[string]string
+}
+
+func parse(line string) Row {
+	parts := strings.Split(line, "|")
+	r := Row{Tag: parts[0], Fields: make(map[string]string)}
+	for _, p := range parts[1:] {
+		if i := strings.IndexByte(p, '='); i >= 0 {
+			r.Fields[p[:i]] = p[i+1:]
+		}
+	}
+	return r
+}
+
+func main() {
+	f, err := os.Open(os.Args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	defer f.Close()
+	h := sha256.New()
+	counts := map[string]int{}
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		line := sc.Text()
+		h.Write([]byte(line + "\n"))
+		counts[parse(line).Tag]++
+	}
+	tags := make([]string, 0, len(counts))
+	for t := range counts {
+		tags = append(tags, t)
+	}
+	sort.Strings(tags)
+	for _, t := range tags {
+		fmt.Printf("COUNT|tag=%s|rows=%d|json=0\n", t, counts[t])
+	}
+	fmt.Println("SHA|" + hex.EncodeToString(h.Sum(nil)))
+}
+
+public class Matrix {
+    private final long[][] a;
+    private final int n;
+    private static final long MOD = 1_000_081L;
+
+    public Matrix(int n) {
+        this.n = n;
+        this.a = new long[n][n];
+    }
+
+    public Matrix multiply(Matrix other) {
+        Matrix out = new Matrix(n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                long s = 0;
+                for (int k = 0; k < n; k++) {
+                    s = (s + a[i][k] * other.a[k][j]) % MOD;
+                }
+                out.a[i][j] = s;
+            }
+        }
+        return out;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (long[] row : a) {
+            sb.append(java.util.Arrays.toString(row)).append('\n');
+        }
+        return sb.toString();
+    }
+}
+
+template <typename T>
+class Stack {
+public:
+    void push(const T& value) { items_.push_back(value); }
+    T pop() {
+        if (items_.empty()) throw std::out_of_range("empty stack");
+        T v = items_.back();
+        items_.pop_back();
+        return v;
+    }
+    bool empty() const { return items_.empty(); }
+    std::size_t size() const { return items_.size(); }
+private:
+    std::vector<T> items_;
+};
+
+int main() {
+    Stack<int> s;
+    for (int i = 0; i < 27; ++i) s.push(i - 13);
+    while (!s.empty()) std::cout << s.pop() << ' ';
+    std::cout << std::endl;
+    return 0;
+}
+
+import numpy as np
+
+def ntt(a, root, mod):
+    n = len(a)
+    a = list(a)
+    j = 0
+    for i in range(1, n):
+        bit = n >> 1
+        while j & bit:
+            j ^= bit
+            bit >>= 1
+        j ^= bit
+        if i < j:
+            a[i], a[j] = a[j], a[i]
+    length = 2
+    while length <= n:
+        w_len = pow(root, n // length, mod)
+        for i in range(0, n, length):
+            w = 1
+            for k in range(i, i + length // 2):
+                u, v = a[k], a[k + length // 2] * w % mod
+                a[k], a[k + length // 2] = (u + v) % mod, (u - v) % mod
+                w = w * w_len % mod
+        length <<= 1
+    return a
+
+class TestRoundTrip(unittest.TestCase):
+    def setUp(self):
+        self.x = list(range(-13, 14))
+
+    def test_exact(self):
+        self.assertEqual(unprism(prism(self.x)), self.x)
+
+    def test_centre_is_zero(self):
+        self.assertEqual(self.x[13], 0)
+
+    @unittest.skip("needs the room store")
+    def test_rooms(self):
+        self.assertEqual(count_bad_rooms(), 0)
+
+interface Star {
+  name: string;
+  bodyBytes: number;
+  litColumns: number;
+  emit(u: number, v: number): number | null;
+}
+
+export function agree(a: Star, b: Star, u: number, v: number): boolean {
+  const x = a.emit(u, v);
+  const y = b.emit(u, v);
+  return x !== null && y !== null && x === y;
+}
+
+const stars: Star[] = await Promise.all(names.map((n) => loadStar(`stars/${n}.txt`)));
+console.log(stars.map((s) => `${s.name}: ${s.litColumns}`).join(", "));
+
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+for f in results/RESULT-*.hbp; do
+  n=$(grep -c "json=0" "$f" || true)
+  printf '%s %s\n' "$n" "$f"
+done | sort -rn | head -10
+if [ ! -f results/SHA256SUMS ]; then
+  echo "missing checksums" >&2
+  exit 1
+fi
+( cd results && sha256sum -c SHA256SUMS --quiet ) && echo "all OK"
+
+FROM rust:1.81-slim AS build
+WORKDIR /src
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+RUN cargo build --release --locked
+FROM debian:bookworm-slim
+COPY --from=build /src/target/release/tribit /usr/local/bin/tribit
+ENTRYPOINT ["/usr/local/bin/tribit"]
+
+CC = gcc
+CFLAGS = -O2 -Wall -Wextra -std=c11
+OBJ = main.o tree.o hash.o
+all: prog
+prog: $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+clean:
+	rm -f $(OBJ) prog
+.PHONY: all clean
+
+.container { display: flex; flex-direction: column; gap: 8px; max-width: 960px; margin: 0 auto; }
+.row > .cell:nth-child(2n) { background-color: #f6f6f6; }
+@media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #eeeeee; } }
+a:hover, a:focus { text-decoration: underline; color: #0044cc; }
+
+<?xml version="1.0" encoding="UTF-8"?>
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Wikipedia</sitename>
+    <base>http://en.wikipedia.org/wiki/Main_Page</base>
+    <generator>MediaWiki 1.6alpha</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+    </namespaces>
+  </siteinfo>
+</mediawiki>
+
+[2026-11-14 18:47:31] [INFO] run started: panel=V70-A1 texts=2 bytes=1048576
+[2026-11-14 18:47:33] [INFO] star 081: body=21912 lit=388
+[2026-11-14 18:47:33] [INFO] star 092: body=21004 lit=455
+[2026-11-14 18:47:34] [INFO] star 243: body=55120 lit=540
+[2026-11-14 18:48:02] [INFO] text=TEXT_WIKI vote=91xxx (example line, written as emission)
+[2026-11-14 18:48:40] [WARN] low memory: 612 MB free; one job only
+[2026-11-14 18:49:11] [INFO] run finished: exit=0 rows=64
+
+0000000 4747 4655 0003 0000 0079 0000 0000 0000
+0000010 0012 0000 0000 0000 0014 0000 0000 0000
+0000020 6567 656e 6172 2e6c 7261 6863 7469 6365
+0000030 7574 6572 0008 0000 0007 0000 0000 0000
+
+struct gguf_header { uint32_t magic; uint32_t version; uint64_t tensor_count; uint64_t kv_count; };
+#define N 64
+#define T 1048576
+static inline uint32_t rotl32(uint32_t x, int r) { return (x << r) | (x >> (32 - r)); }
+for (size_t i = 0; i + 2 < len; i += 3) cube[(b[i] >> 2) * N * N + (b[i + 1] >> 2) * N + (b[i + 2] >> 2)]++;
+
+x = 0; y = 1; z = x + y; i += 1; n -= 1; a[i] = b[j]; p->next = q; s.len(); v.push(x);
+if (a == b) { } else if (a != b) { } else { } while (true) { break; } for (;;) { continue; }
+return 0; return -1; return null; return None; return Ok(()); return Err(e); return false;
+// end of top-up 092

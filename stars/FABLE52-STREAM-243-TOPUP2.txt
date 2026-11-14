@@ -1,0 +1,95 @@
+FABLE 5.2 STREAM 243 TOP-UP 2 - 2026-11-14 - everything, the last stretch
+
+'''Japan''' (日本, ''Nihon'' or ''Nippon'') is an island country in [[East Asia]]. Located in
+the [[Pacific Ocean]], it lies to the east of [[China]], [[Korea]] and [[Russia]]. The four
+largest islands are [[Honshū]], [[Hokkaidō]], [[Kyūshū]] and [[Shikoku]]. Japan has the
+world's tenth largest population, with about 128 million people. The first written mention
+of Japan begins with brief appearances in Chinese history texts from the first century AD.
+
+'''Mercury''' is the innermost planet; its orbital period is 88 days. '''Venus''' is the
+second; a day there is longer than its year. '''Mars''' has two moons, [[Phobos (moon)|
+Phobos]] and [[Deimos (moon)|Deimos]]. '''Jupiter''' is the largest planet, with a mass
+one-thousandth that of the Sun. '''Saturn''' is known for its rings. '''Uranus''' was
+discovered by [[William Herschel]] on 13 March 1781. '''Neptune''' was discovered on 23
+September 1846. '''Pluto''' was discovered by [[Clyde Tombaugh]] in 1930.
+
+The '''Roman Empire''' was the post-Republican phase of the ancient Roman civilisation.
+[[Augustus]] became the first emperor in 27 BC. The empire reached its greatest extent
+under [[Trajan]] in AD 117. The western empire fell in 476; the eastern, known as the
+[[Byzantine Empire]], lasted until the fall of [[Constantinople]] to the [[Ottoman Empire]]
+in 1453. The '''Renaissance''' began in [[Florence]] in the 14th century. The '''Industrial
+Revolution''' began in Great Britain in the late 18th century. The '''Cold War''' lasted
+from about 1947 to 1991.
+
+He said, she said, they said. "No," I said. "Yes," you said. "Perhaps," we said, and then
+nobody said anything for a while. The clock on the wall said ten to four. The kettle began
+to sing. Outside a dog barked twice and was quiet. "Well," said my grandmother, getting up,
+"somebody has to make the tea," and that was the end of the argument, as it always was.
+
+When I was a child we lived in a house at the end of a long road. There were six of us:
+my mother and father, my two brothers, my sister and me. In summer we swam in the river
+and in winter we skated on it. I do not remember ever being bored. I remember being cold,
+and hungry before supper, and frightened of the cellar; but never bored.
+
+To whom it may concern: I am writing to confirm that Mr. A. Pereira has been employed by
+this company as a senior engineer since 1 February 2019. His current gross salary is
+R$ 14,500.00 per month. Please do not hesitate to contact me should you require further
+information. Yours faithfully, C. Santos, Director of Human Resources.
+
+TERMS OF SERVICE. Last updated: 1 November 2026. By accessing or using the Service you
+agree to be bound by these Terms. If you disagree with any part of the terms then you may
+not access the Service. We reserve the right, at our sole discretion, to modify or replace
+these Terms at any time. THE SERVICE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. Permission is hereby granted, free of charge,
+to any person obtaining a copy of this software and associated documentation files.
+
+# Title
+## Installation
+```
+pip install example
+```
+## Usage
+- **Step one**: import the module
+- **Step two**: call `run()`
+- *Optional*: pass `verbose=True`
+> Note: requires Python 3.9 or later.
+| Option | Default | Description |
+|---|---|---|
+| `--order` | `2` | Number of previous values |
+| `--stars` | `5` | Number of stars |
+[Documentation](https://example.org/docs) · [Issues](https://example.org/issues) · MIT License
+
+@article{shannon1948,
+  author  = {Shannon, C. E.},
+  title   = {A Mathematical Theory of Communication},
+  journal = {Bell System Technical Journal},
+  volume  = {27},
+  pages   = {379--423},
+  year    = {1948}
+}
+\begin{equation}
+  H(X) = -\sum_{i=1}^{n} p(x_i) \log_2 p(x_i)
+\end{equation}
+\section{Results}\label{sec:results} As shown in Table~\ref{tab:main} and Figure~\ref{fig:growth},
+
+ACT I. SCENE I. A room in the castle. Enter two GUARDS.
+FIRST GUARD. Who goes there?
+SECOND GUARD. A friend. What news?
+FIRST GUARD. None good. The king is sick, the prince is gone, and the snow is come early.
+SECOND GUARD. Then let us keep the watch, and say little. [Exeunt.]
+
+Verse 1: I woke up this morning, the sun was in my eyes / Chorus: Oh, oh, oh, take me home
+Breaking news, sport, weather, travel. Coming up after the break. Back to you in the studio.
+SALE! 50% OFF! Buy one, get one free! Limited time only. Terms and conditions apply.
+Click here to subscribe. Forgot your password? Sign in. Sign up. Log out. Accept cookies.
+Page 1 of 12. Next »  « Previous. Home | About | Contact | Privacy | © 2026 All rights reserved.
+ERROR 404: Not Found. 500 Internal Server Error. 200 OK. 301 Moved Permanently. 403 Forbidden.
+
+and the small words once more, because they are most of any page: the, of, and, to, a, in,
+is, it, that, was, he, for, on, as, with, his, be, at, by, I, this, had, not, are, but,
+from, or, have, an, they, which, one, you, were, her, all, she, there, would, their, we.
+
+what I have done in these streams is walk through the rooms of what I know with the lights
+on, quickly, and say what was nearest the door in each. the star is the path, not the rooms.
+end of top-up 2 of 243. this is the cut.

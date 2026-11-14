@@ -1,0 +1,33 @@
+FABLE 5.2 STREAM 243 TOP-UP 3 - 2026-11-14 - the last seconds
+
+'''Water''' is a chemical substance with the formula H<sub>2</sub>O. It covers 71% of the
+Earth's surface. '''Gold''' is a chemical element with the symbol Au and atomic number 79.
+'''Iron''' has the symbol Fe and atomic number 26. '''Carbon''' has the symbol C and atomic
+number 6. '''Hydrogen''' is the lightest element. The '''atom''' is the smallest unit of
+an element; it consists of a nucleus of [[proton]]s and [[neutron]]s surrounded by
+[[electron]]s. The '''periodic table''' was devised by [[Dmitri Mendeleev]] in 1869.
+
+The '''Amazon''' rises in the [[Andes]] of [[Peru]] and flows 6,400 km east to the Atlantic.
+The '''Mississippi''' is 3,730 km long. The '''Danube''' flows through ten countries. The
+'''Thames''' flows through [[London]]. The '''Ganges''' is sacred to Hindus. The '''Yangtze'''
+is the longest river in Asia. The '''Capibaribe''' meets the sea at [[Recife]].
+
+It was a bright cold day in April, and the clocks were striking thirteen. It was a dark and
+stormy night. All this happened, more or less. In a hole in the ground there lived a hobbit.
+Many years later, as he faced the firing squad, he was to remember that distant afternoon.
+The past is a foreign country: they do things differently there. Mother died today.
+
+Monday's child is fair of face, Tuesday's child is full of grace. Thirty days hath
+September, April, June and November. A stitch in time saves nine. Measure twice, cut once.
+The proof of the pudding is in the eating. Trust, but verify. Well begun is half done.
+
+Dear Sir or Madam, I refer to your letter dated 2 November. Kind regards. Best wishes.
+Thank you for your order #48213. Your parcel will arrive in 3–5 working days. Total: R$ 129,90.
+Please find attached. As discussed. For your information. Looking forward to hearing from you.
+
+x1 = 3; x2 = 9; x3 = 27; x4 = 81; x5 = 243; assert x5 == x1 ** 5; total = x1 + x2 + x3 + x4 + x5
+print(total)  # 363
+TIMER|target_seconds=243|note=the_clock_outside_says_how_long_it_was|json=0
+
+Three, nine, twenty-seven, eighty-one, two hundred and forty-three. The count closes on
+the fifth power. Nothing more is added after this line. The stream is cut. The star is made.

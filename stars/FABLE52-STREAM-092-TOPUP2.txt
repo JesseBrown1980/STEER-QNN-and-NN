@@ -1,0 +1,137 @@
+FABLE 5.2 STREAM 092 TOP-UP 2 - 2026-11-14 - programs, continued
+
+defmodule Star do
+  @n 64
+  def project(body) when is_binary(body) do
+    body
+    |> :binary.bin_to_list()
+    |> Enum.map(&div(&1, 4))
+    |> Enum.chunk_every(3, 3, :discard)
+    |> Enum.frequencies()
+  end
+
+  def emit(cube, u, v) do
+    cube
+    |> Enum.filter(fn {[a, b, _], _} -> a == u and b == v end)
+    |> Enum.max_by(fn {[_, _, w], c} -> {c, -w} end, fn -> nil end)
+  end
+end
+
+module Main where
+import qualified Data.Map.Strict as M
+import Data.List (sortBy, foldl')
+import Data.Ord (comparing)
+
+count :: Ord a => [a] -> M.Map a Int
+count = foldl' (\m k -> M.insertWith (+) k 1 m) M.empty
+
+main :: IO ()
+main = do
+  s <- getContents
+  let top = take 10 . sortBy (comparing (negate . snd)) . M.toList . count . words $ s
+  mapM_ (\(w, n) -> putStrLn (w ++ " " ++ show n)) top
+
+fun <T : Comparable<T>> List<T>.isSorted(): Boolean = zipWithNext().all { (a, b) -> a <= b }
+data class Room(val id: Long, val sector: Int, val value: ByteArray)
+val rooms = (1L..27L).map { Room(it, (it % 3).toInt(), ByteArray(8)) }
+
+func agree(_ a: [Int?], _ b: [Int?]) -> Int {
+    return zip(a, b).filter { $0 != nil && $0 == $1 }.count
+}
+let lit = columns.compactMap { $0 }.count
+print("lit: \(lit) of \(columns.count)")
+
+using System;
+using System.Linq;
+namespace Stars {
+    public static class Program {
+        public static void Main(string[] args) {
+            var bytes = System.IO.File.ReadAllBytes(args[0]);
+            var q = bytes.Select(b => b >> 2).ToArray();
+            Console.WriteLine($"values: {q.Length}, distinct: {q.Distinct().Count()}");
+        }
+    }
+}
+
+<?php
+function sha16(string $s): string { return substr(hash('sha256', $s), 0, 16); }
+$pid = sha16("EMITTER-SEED|8467a937cba309f7");
+foreach (["alpha", "beta", "gamma"] as $name) { $pid = sha16($pid . "|" . $name); echo "$name $pid\n"; }
+?>
+
+local function shift(a)
+  local out = {0}
+  for i = 1, #a - 1 do out[i + 1] = a[i] end
+  return out
+end
+
+my %count; while (<>) { chomp; $count{$_}++ for split /\|/; }
+print "$_ $count{$_}\n" for sort { $count{$b} <=> $count{$a} } keys %count;
+
+section .text
+global _start
+_start:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, len
+    syscall
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+(define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+(defun fib (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))
+(map (lambda (x) (* x x x)) '(1 2 3))  ; => (1 8 27)
+
+{
+  "compilerOptions": { "target": "ES2022", "module": "NodeNext", "strict": true, "outDir": "dist" },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+[remote "origin"]
+	url = https://github.com/JesseBrown1980/STEER-QNN-and-NN.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+
+server {
+    listen 80;
+    server_name example.org www.example.org;
+    location / { proxy_pass http://127.0.0.1:4600; proxy_set_header Host $host; }
+    location /static/ { root /var/www; expires 30d; }
+}
+
+0 3 * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1
+*/5 * * * * curl -fsS http://127.0.0.1:4796/health > /dev/null
+
+^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
+^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$
+s/\r$//; /^$/d; s/[[:space:]]\+$//
+
+>>> import math
+>>> math.isqrt(10**18)
+1000000000
+>>> [3**k for k in range(6)]
+[1, 3, 9, 27, 81, 243]
+>>> divmod(-7, 3)
+(-3, 2)
+>>> 0.1 + 0.2
+0.30000000000000004
+>>> from fractions import Fraction; Fraction(1, 10) + Fraction(2, 10)
+Fraction(3, 10)
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.41s
+FAILED tests/test_star.py::test_scrambled_control - AssertionError: assert 97970 < 93276
+===================== 1 failed, 12 passed in 4.87s =====================
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+Segmentation fault (core dumped)
+Process finished with exit code 0
+; end of top-up 2 of 092
