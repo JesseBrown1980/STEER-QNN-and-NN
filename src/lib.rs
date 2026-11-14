@@ -7,6 +7,7 @@
 pub mod bigint;
 pub mod coherence;
 pub mod combined;
+pub mod helper;
 pub mod lazy;
 pub mod loops;
 pub mod mature;
