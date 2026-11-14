@@ -458,6 +458,29 @@ mod tests {
             r.bytes[at("INFO256_PATH_1024")],
             r.bytes[at("INFO256_STATIC")]
         );
+        // with a single table per box nothing is shared, so a stored step and a stored value
+        // must give the same network: DELTA = CUBE = BLOCK = the unbounded store (no evictions)
+        let one = Config {
+            fan: 1,
+            block: 3000,
+            tail: 400,
+            tail_mod: 1,
+            tail_rem: 0,
+            skip_rem: None,
+        };
+        let solo = build(one, &mut Synthetic { block: one.block }).expect("build one");
+        let solo_sur = surgery(&solo);
+        let solo_rd = read(&solo, &solo_sur);
+        let (_, solo_bytes) = split(&solo, 0);
+        let quad = [
+            big(Place::Delta),
+            big(Place::Cube),
+            big(Place::Block),
+            a[at("NORMAL_UNBOUNDED")].clone(),
+        ];
+        let q = run(&solo, &solo_rd, &solo_bytes, &quad);
+        assert!(q.occupied[3] > 0 && q.evictions[..3].iter().all(|&e| e == 0));
+        assert!(q.bytes[..3].iter().all(|&v| v == q.bytes[3]));
         // the step-holding helper stores something and stays within its slots
         assert!(r.occupied[at("NORMAL_DELTA_1024")] > 0);
     }
