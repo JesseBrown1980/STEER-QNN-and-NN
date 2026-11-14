@@ -59,7 +59,8 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V60 | Measure the coherence length L; predict the stickiness from L alone | **Formula not shown** (optimum 2 to 3.5 times higher); direction shown. One stickiness on the held box beats the three-delay autapse: **5.4% in stream order, 3.3% and 3.0% shuffled** | 3 of 5 | `JUDGE-COHERENCE729-V60` |
 | V61 | Bounded helper stores beside the cells (block, sphere, cube, path, step) | sealed, queued | – | `SPEC-HELPER729-V61` and addendum 1 |
 | V62 | Is a trained-then-frozen mixer bad because of the snapshot or a fault? | sealed; program not yet written | – | `SPEC-FROZEN729-V62` |
-| V63 | The strongest results on test texts that share no factor with the powers of three (`j mod 11`; then `j mod 27` against `j mod 29`) | **Carry over:** referee 8.8% and 8.2% on mod 11; on 27 against 29 the referee agrees to 0.02 points (7.20% and 7.22%) and the 1/16 core holds | 3 of 3; 4 of 4 | `JUDGE-PRIMESPLIT729-V63`, `-A1` |
+| V63 | The strongest results on test texts that share no factor with the powers of three (`j mod 11`; then `j mod 27` against `j mod 29`) | **Carry over:** referee 8.8% and 8.2% on mod 11; on 27 against 29 the referee agrees to 0.02 points (7.20% and 7.22%) and the 1/16 core holds | 3 of 3; 4 of 4; 3 of 4 | `JUDGE-PRIMESPLIT729-V63`, `-A1`, `-A2` |
+| V64 | A formula from the trime/prime ladder (3/5, 9/11, 27/29) | **No curve in spacing for the guide** (scatter of about a point between texts). The referee's gain rises with length and levels off: about `9766 n/(n+248)` per 100,000 in stream order, n in tails; shape not distinguished from a logarithm | 0 of 2 judged | `JUDGE-LADDERFORMULA729-V64` |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -159,7 +160,7 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (87 of 139 met through V63 and its first addendum). They are sealed first for that
+- **Seat predictions miss often** (90 of 145 met through V64). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
 - **The stickiness formula was a coincidence** (V60): 4,019 against 4,096 compared the
