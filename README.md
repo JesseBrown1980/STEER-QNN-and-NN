@@ -69,6 +69,7 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V70 | The watcher star grown by a streamed emission (V69 growth), then seven streamed emissions of the seat (named 3, 9, 27, 29, 81, 92, 243 seconds) as seven stars strung into the system | **As watchers the new stars help; as links of the overwriting chain they hurt.** Merged, they watch better than the first watcher by 1.7 and 1.9 points and beat every scrambled deal by about 5. Seven watchers voting give the lowest cost of any star arrangement so far (92.0 and 87.9 per 100 of the last-value reader). A chain of twelve is worse than the chain of five. Open: a scrambled control for the vote; the three long streams ran 48, 38 and 118 seconds | operator 3 of 4; seat 11 of 13 | `JUDGE-STARSTRING-V70`, `JUDGE-STARWATCH-V69-GROWTH` |
 | V70 control | The three long streams topped up to their seconds (81.8, 94.6, 246.0); the vote of seven watchers against scrambled watchers | **The vote survives the control 12 of 12**, by 0.9 to 1.5 points. Of its 8.0 and 12.1 points, about 3.5 and 5.7 come from how many watchers are lit, 3.2 and 4.9 from any agreement count (the split of steps), 1.3 and 1.5 from the watchers being real. Topping up did not make better watchers | operator 1 of 2; seat 4 of 6 | `JUDGE-STARSTRING-V70-CONTROL` |
 | V71 | Voters that see further back: rungs (plain, prime, trime, prime-then-trime), a voted light, a backward pipe, an always-on clock, the breath of the stars, a frozen hash; six one-megabyte windows, three scrambled deals | **The adjacent vote with the backward pipe passes the two-value floor on the Asolaria stream in 3 windows of 3** (87.0, 73.0, 68.9 against 87.2, 77.6, 74.1); scrambled voters never do. On Wikipedia text it stays above the floor. Rungs further back, the clock, the breath and the frozen hash all make the vote worse | operator 0 of 7; seat 6 of 14 | `JUDGE-STARBACK-V71` (scored by `tools/judge_star_back.py`) |
+| V72 | The five stars blasted with the seat's own feeds (about 21 to 30 seconds each), the system measured five ways, six one-megabyte windows | **The blast raises the stars' right guesses by 9 to 22% and slightly improves the watchers' vote, in 6 windows of 6**; a real feed beats a scrambled one every time on right guesses. The chain gets worse on Wikipedia text; the feed alone does as well as the blasted star; any other pairing of feed and star did better than the seat's | operator 0 of 2; seat 6 of 8 | `JUDGE-STARBLAST-V72` (scored by `tools/judge_star_blast.py`) |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -168,7 +169,7 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (144 of 224 met through V71). They are sealed first for that
+- **Seat predictions miss often** (150 of 232 met through V72). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
 - **The stickiness formula was a coincidence** (V60): 4,019 against 4,096 compared the
