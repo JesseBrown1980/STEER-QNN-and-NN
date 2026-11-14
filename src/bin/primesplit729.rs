@@ -1,6 +1,8 @@
 //! The strongest results on a test text that shares no factor with the network's powers of three
 //! (panel V63): blocks with j mod 11 = 1, beside the usual j mod 9 = 1 as an instrument check.
-//! usage: primesplit729 <stream file>
+//! usage: primesplit729 <stream file> [modulus ...]
+//! With moduli given, the texts are j mod 9 = 1 in stream order (the instrument check) and, for
+//! each modulus m, j mod m = 1 in stream order and shuffled (addendum 1: 27 and 29).
 //! Integers only.
 #![forbid(unsafe_code)]
 #![deny(clippy::float_arithmetic)]
@@ -37,8 +39,23 @@ const BOXES: [(&str, bool); 2] = [("BOX_PLAIN", false), ("BOX_AUTAPSE", true)];
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
-    if args.len() != 2 {
-        return Err("usage: primesplit729 <stream file>".into());
+    if args.len() < 2 {
+        return Err("usage: primesplit729 <stream file> [modulus ...]".into());
+    }
+    let mut cases: Vec<(String, usize, usize, bool)> = CASES
+        .iter()
+        .map(|&(n, m, r, s)| (n.to_string(), m, r, s))
+        .collect();
+    if args.len() > 2 {
+        cases.truncate(1);
+        for a in &args[2..] {
+            let m: usize = a.parse()?;
+            if m < 2 {
+                return Err("a modulus must be at least 2".into());
+            }
+            cases.push((format!("TEXT_{m}_NATURAL"), m, 1, false));
+            cases.push((format!("TEXT_{m}_SHUFFLED"), m, 1, true));
+        }
     }
     let file = File::open(&args[1])?;
     let size = file.metadata()?.len() as usize;
@@ -71,7 +88,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         mk("INFO16_STATIC", Core::Info(1), false),
         mk("INFO16_LEARN", Core::Info(1), true),
     ];
-    for (case, modulus, rem, shuffled) in CASES {
+    for (case, modulus, rem, shuffled) in cases {
         let (ids, mix) = split_by(&net, modulus, rem, shuffled);
         // the two box cells side by side: each run keeps two sets of learned entries
         let pair: Vec<Outcome> = std::thread::scope(|s| {
