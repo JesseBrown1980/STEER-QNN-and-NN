@@ -56,10 +56,10 @@ Khattab, 2026-11-02). Pressure, flow, walls, stars and neurons are analogies on 
 | V57 | Autapse guide, referee and information cores in one network | Together **10.2% in stream order, 7.5% and 7.0% shuffled**; the gains overlap by about 3.5 points; a 1/16 core with the referee equals the full network | 3 of 6 | `JUDGE-COMBINED729-V57` |
 | V58 | A fast start with a floor on the correction step | **Shown:** 0.9% better than the fixed step on the full network, 1.7% to 2.1% from the 1/256 core, in both orders | 4 of 4 | `JUDGE-FLOOR729-V58` |
 | V59 | A trained gated mixer in place of the hard switch | **The guide/answer asymmetry holds in a trained model**; the mix gains 4% to 5%; trained-then-frozen weights are far worse (cause open) | 4 of 6 | `JUDGE-MIXER729-V59` |
-| V60 | Measure the coherence length L; predict the stickiness from L alone | sealed, queued | – | `SPEC-COHERENCE729-V60` |
+| V60 | Measure the coherence length L; predict the stickiness from L alone | **Formula not shown** (optimum 2 to 3.5 times higher); direction shown. One stickiness on the held box beats the three-delay autapse: **5.4% in stream order, 3.3% and 3.0% shuffled** | 3 of 5 | `JUDGE-COHERENCE729-V60` |
 | V61 | Bounded helper stores beside the cells (block, sphere, cube, path, step) | sealed, queued | – | `SPEC-HELPER729-V61` and addendum 1 |
 | V62 | Is a trained-then-frozen mixer bad because of the snapshot or a fault? | sealed; program not yet written | – | `SPEC-FROZEN729-V62` |
-| V63 | The strongest results on a test text that shares no factor with the powers of three (`j mod 11`) | **Carry over:** referee 8.8% and 8.2%; 1/16 core within 0.15 points; autapse guide 3.0% (4.0% under mod 9) and 1.4% | 3 of 3 | `JUDGE-PRIMESPLIT729-V63` |
+| V63 | The strongest results on test texts that share no factor with the powers of three (`j mod 11`; then `j mod 27` against `j mod 29`) | **Carry over:** referee 8.8% and 8.2% on mod 11; on 27 against 29 the referee agrees to 0.02 points (7.20% and 7.22%) and the 1/16 core holds | 3 of 3; 4 of 4 | `JUDGE-PRIMESPLIT729-V63`, `-A1` |
 
 Specs are in `specs/`, rows and judgements in `results/`.
 
@@ -109,8 +109,12 @@ About a quarter of the gain seen on the exam text carries over. A rule read from
 - **A box cell whose own earlier choice returns to it (an autapse, strength 4,096) is good in
   both orders:** 4.0% in stream order, 1.5% and 0.9% on unrelated pieces. The evidence window
   stays short, so a real change of text still overturns the choice. Stronger is worse (V56).
-- Whether the best strength follows from how long the best box stays the best is under test
-  (V60); the formula is a conjecture found after V51.
+- **A single stickiness on the box held a byte ago is a better guide than the three delays**
+  (V60): 5.4% and 5.3% in stream order at strength 16,384 (the largest tried, still improving),
+  3.3% and 3.0% on unrelated pieces at 8,192.
+- The best box stays the best for about 13,500 to 14,700 bytes in stream order and about 2,100
+  shuffled (V60). The conjectured formula for the stickiness, `256 log2(26 L)`, gets the
+  direction right and the size wrong by a factor of two or more.
 - With an oracle that is handed the right inner table, 5% to 6% more is available.
 
 ### Loops and learning
@@ -155,9 +159,11 @@ compressors; the measurement is what is reported here.
 - **V44 must be read with V46.** "Patient A" (−5.6%) and "Patient B" (−4.4% with 24% of the
   entries) hold for stream-order text only.
 - **V45 did not show the law** in the form predicted; `LAW.md` carries that beside the statement.
-- **Seat predictions miss often** (80 of 130 met through V63). They are sealed first for that
+- **Seat predictions miss often** (87 of 139 met through V63 and its first addendum). They are sealed first for that
   reason.
 - **The seat's reading of the trained weights failed its test** (V54 hand edits: 1 of 5).
+- **The stickiness formula was a coincidence** (V60): 4,019 against 4,096 compared the
+  formula with a different device; on the device it describes the optimum is 8,192 and above.
 - **Gains were expected to add and do not** (V57): the seat said about 12% and 9% before reading
   the result; the measurement is 10.2% and about 7.3%.
 
