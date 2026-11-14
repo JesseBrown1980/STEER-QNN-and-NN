@@ -3,6 +3,7 @@
 //! usage: primesplit729 <stream file> [modulus ...]
 //! With moduli given, the texts are j mod 9 = 1 in stream order (the instrument check) and, for
 //! each modulus m, j mod m = 1 in stream order and shuffled (addendum 1: 27 and 29).
+//! A modulus may carry a block limit, m@L: only blocks j < L are taken (addendum 2: 3@6561 5@6561).
 //! Integers only.
 #![forbid(unsafe_code)]
 #![deny(clippy::float_arithmetic)]
@@ -42,19 +43,28 @@ fn main() -> Result<(), Box<dyn Error>> {
     if args.len() < 2 {
         return Err("usage: primesplit729 <stream file> [modulus ...]".into());
     }
-    let mut cases: Vec<(String, usize, usize, bool)> = CASES
+    let mut cases: Vec<(String, usize, usize, bool, usize)> = CASES
         .iter()
-        .map(|&(n, m, r, s)| (n.to_string(), m, r, s))
+        .map(|&(n, m, r, s)| (n.to_string(), m, r, s, usize::MAX))
         .collect();
     if args.len() > 2 {
         cases.truncate(1);
         for a in &args[2..] {
-            let m: usize = a.parse()?;
-            if m < 2 {
-                return Err("a modulus must be at least 2".into());
+            let (ms, limit) = match a.split_once('@') {
+                Some((ms, ls)) => (ms, ls.parse::<usize>()?),
+                None => (a.as_str(), usize::MAX),
+            };
+            let m: usize = ms.parse()?;
+            if m < 2 || limit == 0 {
+                return Err("a modulus must be at least 2 and a limit positive".into());
             }
-            cases.push((format!("TEXT_{m}_NATURAL"), m, 1, false));
-            cases.push((format!("TEXT_{m}_SHUFFLED"), m, 1, true));
+            let tag = if limit == usize::MAX {
+                format!("TEXT_{m}")
+            } else {
+                format!("TEXT_{m}_BELOW_{limit}")
+            };
+            cases.push((format!("{tag}_NATURAL"), m, 1, false, limit));
+            cases.push((format!("{tag}_SHUFFLED"), m, 1, true, limit));
         }
     }
     let file = File::open(&args[1])?;
@@ -88,8 +98,17 @@ fn main() -> Result<(), Box<dyn Error>> {
         mk("INFO16_STATIC", Core::Info(1), false),
         mk("INFO16_LEARN", Core::Info(1), true),
     ];
-    for (case, modulus, rem, shuffled) in cases {
-        let (ids, mix) = split_by(&net, modulus, rem, shuffled);
+    for (case, modulus, rem, shuffled, limit) in cases {
+        let (all_ids, all_mix) = split_by(&net, modulus, rem, shuffled);
+        // keep the tails of the blocks below the limit, in the order they came
+        let mut ids = Vec::new();
+        let mut mix = Vec::new();
+        for (n, &j) in all_ids.iter().enumerate() {
+            if j < limit {
+                ids.push(j);
+                mix.extend_from_slice(&all_mix[n * cfg.tail..(n + 1) * cfg.tail]);
+            }
+        }
         // the two box cells side by side: each run keeps two sets of learned entries
         let pair: Vec<Outcome> = std::thread::scope(|s| {
             let handles: Vec<_> = BOXES
