@@ -30,6 +30,33 @@ pub struct Arm {
     pub core: Core,
     pub learn: bool,
     pub inner_autapse: bool,
+    /// the correction step while learning
+    pub step: Step,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum Step {
+    /// always 1/2^r
+    Fixed(u32),
+    /// 1/4 for a cell's first two corrections, then halving, never below 1/2^f
+    Floor(u32),
+}
+
+fn step_of(rule: Step, corrections: u16) -> u32 {
+    match rule {
+        Step::Fixed(r) => r,
+        Step::Floor(f) => {
+            let young = match corrections {
+                0..=1 => 2,
+                2..=3 => 3,
+                4..=7 => 4,
+                8..=15 => 5,
+                16..=31 => 6,
+                _ => 7,
+            };
+            young.min(f)
+        }
+    }
 }
 
 pub struct Outcome {
@@ -45,7 +72,7 @@ struct State {
     hist: Vec<i32>,
     age: usize,
     ring: Vec<usize>,
-    cells: HashMap<u64, u16>,
+    cells: HashMap<u64, (u16, u16)>,
     total: i64,
     on_mid: u64,
 }
@@ -181,7 +208,7 @@ pub fn run(
                         .map(|p| t.vals[p]);
                     let pv = if arm.learn {
                         let key = ((id as u64) << 32) | u64::from(idx[q]);
-                        s.cells.get(&key).copied().or(stored).unwrap_or(ptop[q])
+                        s.cells.get(&key).map(|c| c.0).or(stored).unwrap_or(ptop[q])
                     } else {
                         stored.unwrap_or(ptop[q])
                     };
@@ -197,7 +224,10 @@ pub fn run(
                 let id = cur_t * fan + pick;
                 for q in 0..8 {
                     let key = ((id as u64) << 32) | u64::from(idx[q]);
-                    s.cells.insert(key, toward(pv_pick[q], bits[q], RATE));
+                    let n = s.cells.get(&key).map_or(0, |c| c.1);
+                    let r = step_of(arm.step, n);
+                    s.cells
+                        .insert(key, (toward(pv_pick[q], bits[q], r), n.saturating_add(1)));
                 }
             }
             let w = s.age % WINDOW;
@@ -232,6 +262,7 @@ pub fn arms() -> Vec<Arm> {
         core,
         learn,
         inner_autapse,
+        step: Step::Fixed(RATE),
     };
     vec![
         mk("N_STATIC_PLAIN", Core::Normal, false, false),
@@ -245,6 +276,27 @@ pub fn arms() -> Vec<Arm> {
         mk("NOTHING_LEARN_AUTAPSE", Core::Nothing, true, true),
         mk("INFO16_STATIC_AUTAPSE", Core::Info(1), false, true),
         mk("INFO256_STATIC_AUTAPSE", Core::Info(3), false, true),
+    ]
+}
+
+/// The eight arms of the floor panel (V58), N_FIXED4 first; all with the inner autapse.
+pub fn floor_arms() -> Vec<Arm> {
+    let mk = |name: &str, core: Core, step: Step| Arm {
+        name: name.to_string(),
+        core,
+        learn: true,
+        inner_autapse: true,
+        step,
+    };
+    vec![
+        mk("N_FIXED4", Core::Normal, Step::Fixed(4)),
+        mk("N_FIXED3", Core::Normal, Step::Fixed(3)),
+        mk("N_FLOOR4", Core::Normal, Step::Floor(4)),
+        mk("N_FLOOR3", Core::Normal, Step::Floor(3)),
+        mk("INFO256_FIXED4", Core::Info(3), Step::Fixed(4)),
+        mk("INFO256_FLOOR4", Core::Info(3), Step::Floor(4)),
+        mk("INFO256_FLOOR3", Core::Info(3), Step::Floor(3)),
+        mk("INFO16_FLOOR4", Core::Info(1), Step::Floor(4)),
     ]
 }
 
@@ -338,5 +390,24 @@ mod tests {
         assert_eq!(with_box.bytes[1], au.bytes[5]);
         assert_eq!(with_box.own_box, au.own_box);
         assert!(with_box.learned[3] > 0 && with_box.learned[0] == 0);
+        // the floor panel's N_FIXED4 is this panel's N_LEARN_AUTAPSE; a floor of 2 is the fixed step 1/4
+        let fl = floor_arms();
+        assert_eq!(fl.len(), 8);
+        let f = run(&net, &sur, &rd, (&ids, &bytes), true, &fl);
+        assert_eq!(f.bytes[0], with_box.bytes[3]);
+        let mut a2 = fl[0].clone();
+        a2.step = Step::Fixed(2);
+        let mut b2 = fl[0].clone();
+        b2.step = Step::Floor(2);
+        let g = run(&net, &sur, &rd, (&ids, &bytes), false, &[a2, b2]);
+        assert_eq!(g.bytes[0], g.bytes[1]);
+        assert_eq!(
+            (
+                step_of(Step::Floor(4), 0),
+                step_of(Step::Floor(4), 3),
+                step_of(Step::Floor(4), 100)
+            ),
+            (2, 3, 4)
+        );
     }
 }
