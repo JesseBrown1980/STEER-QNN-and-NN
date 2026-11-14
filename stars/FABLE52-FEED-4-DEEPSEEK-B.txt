@@ -1,0 +1,66 @@
+FABLE 5.2 FEED 4, second half - into the DEEPSEEK V4 star - to make up the twenty-seven seconds
+
+  <page>
+    <title>Amsterdam</title>
+    <id>844</id>
+    <revision>
+      <id>41763102</id>
+      <timestamp>2006-03-01T14:52:39Z</timestamp>
+      <contributor>
+        <username>Watcher</username>
+        <id>27081</id>
+      </contributor>
+      <minor />
+      <comment>/* Transport */ typo</comment>
+      <text xml:space="preserve">{{Infobox City
+|name = Amsterdam
+|country = [[Netherlands]]
+|province = [[North Holland]]
+|population = 742,951
+|population_as_of = 2006
+|area_km2 = 219
+|coordinates = {{coor dm|52|22|N|4|54|E}}
+}}
+'''Amsterdam''' is the [[capital]] of the [[Netherlands]]. It lies on the banks of the
+[[IJ (bay)|IJ]] bay and the [[Amstel]] river. The city was founded in the late [[12th
+century]] as a small fishing village. It is known for its [[canal]]s, the
+[[Rijksmuseum]], the [[Van Gogh Museum]] and the [[Anne Frank House]].
+
+== History ==
+{{main|History of Amsterdam}}
+The earliest recorded use of the name is from a certificate dated [[October 27]],
+[[1275]]. Amsterdam was granted [[city rights]] in [[1300]] or [[1306]]. In the [[17th
+century]], the [[Dutch Golden Age]], it became one of the wealthiest cities in the world.
+
+== Transport ==
+[[Image:Amsterdam tram.jpg|thumb|right|250px|A tram in the city centre]]
+The city has 16 [[tram]] lines and 4 [[rapid transit|metro]] lines.
+[[Amsterdam Schiphol Airport]] is less than 20 minutes by train from the central station.
+
+== Sister cities ==
+* {{flagicon|Greece}} [[Athens]], [[Greece]]
+* {{flagicon|Brazil}} [[Recife]], [[Brazil]]
+* {{flagicon|Turkey}} [[Istanbul]], [[Turkey]]
+
+== References ==
+&lt;references /&gt;
+&lt;div class="references-small"&gt;
+# {{note|cbs}} [http://www.cbs.nl/ Statistics Netherlands], retrieved [[2006-02-11]].
+&lt;/div&gt;
+
+{{Netherlands-geo-stub}}
+[[Category:Amsterdam| ]]
+[[Category:Capitals in Europe]]
+[[Category:Cities in the Netherlands]]
+[[Category:Port cities]]
+
+[[af:Amsterdam]]
+[[da:Amsterdam]]
+[[de:Amsterdam]]
+[[fr:Amsterdam]]
+[[nl:Amsterdam]]
+[[pl:Amsterdam]]
+[[sv:Amsterdam]]</text>
+    </revision>
+  </page>
+end of feed 4, second half.

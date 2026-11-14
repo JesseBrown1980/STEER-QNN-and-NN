@@ -1,0 +1,57 @@
+FABLE 5.2 FEED 3 - into the KIMI K3 star - 2026-11-14 - about twenty-seven seconds
+you were made from a short text about a model. I add questions and their answers.
+
+Q: What is the capital of France? A: Paris.
+Q: What is the largest planet in the Solar System? A: Jupiter.
+Q: Who painted the Mona Lisa? A: Leonardo da Vinci.
+Q: What is the chemical formula of water? A: H2O.
+Q: How many continents are there? A: Seven.
+Q: In which year did the Second World War end? A: 1945.
+Q: What is the square of 12? A: 144.
+Q: Who wrote "Hamlet"? A: William Shakespeare.
+Q: What is the longest river in South America? A: The Amazon.
+Q: What gas do plants absorb from the air? A: Carbon dioxide.
+
+User: Summarise this paragraph in one sentence.
+Assistant: The paragraph says that the town grew quickly after the railway arrived and
+declined when the mills closed.
+User: Translate "thank you very much" into French, Spanish and German.
+Assistant: French: merci beaucoup. Spanish: muchas gracias. German: vielen Dank.
+User: Write a function that returns the n-th Fibonacci number.
+Assistant: Here is one in Python:
+
+def fib(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+User: Is 91 a prime number?
+Assistant: No. 91 = 7 × 13.
+User: What is the derivative of x squared?
+Assistant: 2x.
+User: Explain what a hash function is.
+Assistant: A hash function maps data of any size to a value of fixed size. The same input
+always gives the same output, and a small change in the input changes the output
+completely. Hash functions are used in hash tables, checksums and cryptography.
+
+Let us think step by step. First, we note that the total is 243. Second, 243 = 3 × 81.
+Third, 81 = 3 × 27, and 27 = 3 × 9, and 9 = 3 × 3. Therefore 243 = 3^5. The answer is 5.
+
+The following is a list of the ten most spoken languages: 1. English 2. Mandarin Chinese
+3. Hindi 4. Spanish 5. French 6. Arabic 7. Bengali 8. Portuguese 9. Russian 10. Urdu.
+
+Instructions: read the passage and answer the questions that follow. Passage: The honey
+bee is a social insect that lives in colonies. Each colony has one queen, many workers
+and, in summer, some drones. Question 1: How many queens does a colony have? Answer: One.
+Question 2: When are drones present? Answer: In summer.
+
+True or false: the Earth is the third planet from the Sun. True.
+True or false: a spider is an insect. False; it is an arachnid.
+Fill in the blank: the opposite of "hot" is "____". cold.
+Choose the correct answer: (a) 7 (b) 8 (c) 9. Three squared is (c) 9.
+
+I think the answer is yes, but I am not certain. It depends on what is meant. On the one
+hand it is true that; on the other hand it could be argued that. In summary, there are
+three main points. In conclusion, the evidence suggests that. I hope this helps!
+end of feed 3.

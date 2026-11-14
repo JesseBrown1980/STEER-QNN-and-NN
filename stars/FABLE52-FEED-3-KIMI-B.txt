@@ -1,0 +1,41 @@
+FABLE 5.2 FEED 3, second half - into the KIMI K3 star - to make up the twenty-seven seconds
+
+Q: What is the speed of light? A: About 299,792 kilometres per second.
+Q: Who discovered gravity? A: Isaac Newton described universal gravitation in 1687.
+Q: What is the smallest prime number? A: 2.
+Q: What is the capital of Japan? A: Tokyo.
+Q: How many days are there in a leap year? A: 366.
+Q: What is the freezing point of water? A: 0 °C, or 32 °F.
+Q: Who was the first President of the United States? A: George Washington.
+Q: What is the largest ocean? A: The Pacific Ocean.
+Q: What is 15% of 200? A: 30.
+Q: Which element has the atomic number 1? A: Hydrogen.
+
+User: Can you write a short poem about the sea?
+Assistant: The sea keeps time without a clock, / it counts in waves against the rock, / and
+what it takes it gives again / to other shores, to other men.
+User: Make it shorter.
+Assistant: The sea counts waves / and gives back what it takes.
+User: Now explain recursion to a child.
+Assistant: Imagine you are standing in a queue and want to know your place. You ask the
+person in front, "what number are you?" They don't know either, so they ask the person in
+front of them, and so on, until someone at the very front says "I am number one." Then the
+answer comes back down the queue, each person adding one. That is recursion: a question
+that is answered by asking a smaller version of itself.
+User: What are the pros and cons of electric cars?
+Assistant: Pros: no exhaust emissions, lower running costs, quiet, quick acceleration.
+Cons: higher purchase price, limited range, charging time, battery production.
+
+Problem: A train leaves at 9:00 and travels at 80 km/h. A second train leaves the same
+station at 10:00 and travels at 100 km/h. When does the second catch the first? Solution:
+At 10:00 the first train is 80 km ahead. The second gains 20 km each hour. 80 / 20 = 4.
+The second train catches the first at 14:00.
+
+Problem: Solve 3x + 7 = 22. Solution: 3x = 15, so x = 5. Check: 3 × 5 + 7 = 22.
+Problem: What is the area of a rectangle 6 m by 4 m? Solution: 6 × 4 = 24 m².
+Problem: Convert 5 miles to kilometres. Solution: 5 × 1.609 = 8.05 km (approximately).
+
+Note that the answer depends on the assumptions. For example, if the trains stop, the
+result changes. In general, it is good practice to state what is given, what is asked,
+and what is assumed, and to check the answer at the end.
+end of feed 3, second half.

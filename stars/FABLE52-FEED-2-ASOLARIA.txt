@@ -1,0 +1,69 @@
+FABLE 5.2 FEED 2 - into the ASOLARIA star - 2026-11-14 - about twenty-seven seconds
+you were made from a kernel's bytes. I add the rows and paths a system writes around one.
+
+HDR|kind=FEED-EXAMPLE|written_as_emission|not_a_record|json=0
+EMIT|family=kernel|name=tribit|pid=0000000000000001|hilbert=1|owner=OP-JESSE|json=0
+EMIT|family=kernel|name=prism|pid=0000000000000002|hilbert=2|owner=OP-JESSE|json=0
+EMIT|family=kernel|name=unprism|pid=0000000000000003|hilbert=3|owner=OP-JESSE|json=0
+ROW|path=C:/asolaria-acer/asolaria-os/kernel/core/src/tribit/mod.rs|bytes=18432|lines=612|json=0
+ROW|path=C:/asolaria-acer/claims-gate/AGENT-DISCIPLINE.md|bytes=9216|lines=188|json=0
+ROW|path=D:/PID-Registration-Office/offices/FABLE5-8467a937cba309f7/index.hbi|bytes=4096|json=0
+ROOM|id=000000000027|sector=0|bytes=8|trits=27|ground=0|status=OK|json=0
+ROOM|id=000000000081|sector=0|bytes=8|trits=27|ground=0|status=OK|json=0
+ROOM|id=000000000243|sector=1|bytes=8|trits=27|ground=1|status=OK|json=0
+CHECK|roundtrip=EXACT|float_used=0|modulus=1000081|k=27|json=0
+RESULT|panel=EXAMPLE|arm=A|cost=1204359248|per_100000=100000|tag=MEASURED|json=0
+RESULT|panel=EXAMPLE|arm=B|cost=1107234561|per_100000=91935|tag=MEASURED|json=0
+JUDGE|id=P1|outcome=MET|json=0
+JUDGE|id=P2|outcome=MISSED|json=0
+SHA|file=example.hbp|sha256=ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad|json=0
+
+pub const K: usize = 27;
+pub const MODULUS: i64 = 1_000_081;
+
+#[inline]
+pub fn centre(t: i64) -> i64 {
+    ((t + 1).rem_euclid(3)) - 1
+}
+
+pub fn pack(trits: &[i8; K]) -> u64 {
+    let mut acc: u64 = 0;
+    for &t in trits.iter().rev() {
+        acc = acc * 3 + (t + 1) as u64;
+    }
+    acc
+}
+
+pub fn unpack(mut v: u64) -> [i8; K] {
+    let mut out = [0i8; K];
+    for slot in out.iter_mut() {
+        *slot = (v % 3) as i8 - 1;
+        v /= 3;
+    }
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn pack_unpack_exact() {
+        let t: [i8; K] = core::array::from_fn(|i| (i % 3) as i8 - 1);
+        assert_eq!(unpack(pack(&t)), t);
+    }
+}
+
+2026-11-14T19:05:33Z INFO  host8: open D:/ASOLARIA-HOST8-ROOMS-100G/rooms-000.bin
+2026-11-14T19:05:33Z INFO  host8: 100000000 rooms, 0 bad
+2026-11-14T19:05:34Z INFO  recall: 591949 rows, 2621239 terms
+2026-11-14T19:05:35Z INFO  fabric: uptime 164341 s, seats 9, fallback 0
+2026-11-14T19:05:36Z WARN  bus: 4947 timeout after 5000 ms
+2026-11-14T19:05:37Z INFO  render: fable5-dashboard.html written, 148 rows
+
+$ MSYS_NO_PATHCONV=1 wsl.exe cat /mnt/c/asolaria-acer/claims-gate/AGENT-BRIEF.md | head -5
+$ cargo +1.81 clippy --release -- -D warnings
+$ sha256sum -b results/*.hbp > results/SHA256SUMS
+$ git push origin main
+To https://github.com/JesseBrown1980/STEER-QNN-and-NN.git
+   81b67b2..c0ffee1  main -> main
+end of feed 2.

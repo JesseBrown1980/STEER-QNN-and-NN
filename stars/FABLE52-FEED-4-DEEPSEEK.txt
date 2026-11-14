@@ -1,0 +1,78 @@
+FABLE 5.2 FEED 4 - into the DEEPSEEK V4 star - 2026-11-14 - about twenty-seven seconds
+you were made from manifests and configurations. I add the markup the pages are held in.
+
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xml:lang="en">
+  <page>
+    <title>Algorithm</title>
+    <id>775</id>
+    <revision>
+      <id>42089104</id>
+      <timestamp>2006-03-03T19:22:07Z</timestamp>
+      <contributor>
+        <username>Example</username>
+        <id>194203</id>
+      </contributor>
+      <comment>rv vandalism</comment>
+      <text xml:space="preserve">In [[mathematics]] and [[computer science]], an '''algorithm''' is a
+finite sequence of instructions for solving a problem. The word comes from the name of the
+9th-century Persian mathematician [[Muhammad ibn Musa al-Khwarizmi|al-Khwarizmi]].
+
+== History ==
+The concept was formalised in 1936 through [[Alan Turing]]'s [[Turing machine]]s and
+[[Alonzo Church]]'s [[lambda calculus]].
+
+== Examples ==
+* [[Euclidean algorithm]] &amp;mdash; the greatest common divisor of two numbers
+* [[Sieve of Eratosthenes]] &amp;mdash; all primes up to a limit
+* [[Binary search]] &amp;mdash; a sorted list, in O(log ''n'') time
+* [[Quicksort]], [[mergesort]], [[heapsort]]
+
+{| border="1" cellpadding="2"
+! Name !! Year !! Complexity
+|-
+| Bubble sort || 1956 || O(''n''&lt;sup&gt;2&lt;/sup&gt;)
+|-
+| Quicksort || 1960 || O(''n'' log ''n'')
+|-
+| Merge sort || 1945 || O(''n'' log ''n'')
+|}
+
+&lt;math&gt;\gcd(a, b) = \gcd(b, a \bmod b)&lt;/math&gt;
+
+&lt;ref&gt;Knuth, Donald (1997). ''[[The Art of Computer Programming]]'', Volume 1.&lt;/ref&gt;
+&lt;!-- please add sources --&gt;
+&quot;An algorithm must be seen to be believed.&quot; &amp;ndash; Donald Knuth
+
+== See also ==
+* [[Data structure]]
+* [[Computational complexity theory]]
+
+== External links ==
+* [http://www.nist.gov/dads/ Dictionary of Algorithms and Data Structures]
+
+[[Category:Algorithms| ]]
+[[Category:Mathematical logic]]
+[[de:Algorithmus]]
+[[es:Algoritmo]]
+[[fr:Algorithmique]]
+[[it:Algoritmo]]
+[[ja:アルゴリズム]]
+[[pt:Algoritmo]]
+[[ru:Алгоритм]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Alan Turing</title>
+    <id>1208</id>
+    <revision>
+      <id>41987311</id>
+      <timestamp>2006-03-03T02:10:55Z</timestamp>
+      <contributor>
+        <ip>203.0.113.27</ip>
+      </contributor>
+      <text xml:space="preserve">'''Alan Mathison Turing''' ([[23 June]] [[1912]] &amp;ndash; [[7 June]]
+[[1954]]) was an English [[mathematician]], [[logician]] and [[cryptographer]].</text>
+    </revision>
+  </page>
+</mediawiki>
+end of feed 4.

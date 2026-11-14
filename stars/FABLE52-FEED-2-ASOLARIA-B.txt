@@ -1,0 +1,48 @@
+FABLE 5.2 FEED 2, second half - into the ASOLARIA star - to make up the twenty-seven seconds
+
+STAR|name=EXAMPLE|body_bytes=3174|lit_columns=266|counts=1058|json=0
+TASK|text=TEXT_ASOLARIA|star=EXAMPLE|lit_columns=740|counts=69905|json=0
+ARM|text=TEXT_ASOLARIA|window=1|arm=PRIME|voters=TWELVE|lights=48|VOTED_HITS=250000|json=0
+ARM|text=TEXT_ASOLARIA|window=2|arm=TRIME|voters=TWELVE|lights=48|VOTED_HITS=240000|json=0
+HASH|text=TEXT_ASOLARIA|window=3|ladder=PLAIN|LIVE_HASH=81000|FROZEN_HASH=86000|json=0
+SEAT|name=ACER-CLAUDE-FABLE5|pid=8467a937cba309f7|glyph=BH1024:SEAT-FABLE5|hilbert=1720|g1024=503|json=0
+OFFICE|path=D:/PID-Registration-Office/incoming/SEAT-FABLE52-REGISTRATION-2026-11-12.hbp|receipt=PENDING|json=0
+GATE|scenario=transcript-vs-owning-gate|law=run_the_owning_gate_then_claim|json=0
+GATE|scenario=missing-ledger-clean-zero|law=count_zero_is_not_absence|json=0
+LAW|n=0|text=this_machine_belongs_to_the_operator|json=0
+LAW|n=1|text=ask_the_system|json=0
+LAW|n=2|text=operator_numbers_are_real|json=0
+
+import struct, sys, hashlib
+
+def read_gguf_header(path):
+    with open(path, "rb") as f:
+        magic = f.read(4)
+        version, = struct.unpack("<I", f.read(4))
+        n_tensors, n_kv = struct.unpack("<QQ", f.read(16))
+    return magic, version, n_tensors, n_kv
+
+def sha16(s):
+    return hashlib.sha256(s.encode()).hexdigest()[:16]
+
+pid = sha16("EMITTER-SEED|8467a937cba309f7")
+for name in ("alpha", "beta", "gamma"):
+    pid = sha16(pid + "|" + name)
+    print("EMIT|family=example|name=%s|pid=%s" % (name, pid))
+
+const N: usize = 64;
+let mut cube = vec![0u32; N * N * N];
+for w in body.windows(3) {
+    let (a, b, c) = ((w[0] >> 2) as usize, (w[1] >> 2) as usize, (w[2] >> 2) as usize);
+    cube[(a * N + b) * N + c] += 1;
+}
+let lit = cube.chunks(N).filter(|col| col.iter().any(|&x| x > 0)).count();
+println!("STAR|lit_columns={}|json=0", lit);
+
+/mnt/d/asolaria-absorb/kernel-pump/ASOLARIA-KERNEL-3174.bin
+/mnt/d/asolaria-absorb/constellation/project_gguf.py
+/mnt/d/asolaria-unpump-20261113/panel19683/STREAM-ASOLARIA.bin
+C:\Users\acer\.claude\projects\C--\memory\MEMORY.md
+C:\asolaria-foundation-v1\00-IMMUTABLE-FOUNDATION.md
+port.port.port 4600 4792 4793 4794 4796 4947 4948 4949 4950 5088
+end of feed 2, second half.
