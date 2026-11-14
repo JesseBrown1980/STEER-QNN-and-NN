@@ -100,9 +100,7 @@ fn reference() -> Result<HashMap<String, (i64, i64)>, Box<dyn Error>> {
     Ok(out)
 }
 
-fn load_and_train(
-    filename: &str,
-) -> Result<Training, Box<dyn Error>> {
+fn load_and_train(filename: &str) -> Result<Training, Box<dyn Error>> {
     let mut file = File::open(filename)?;
     let size = file.metadata()?.len();
     let block = usize::try_from(size / BLOCKS as u64)?;
