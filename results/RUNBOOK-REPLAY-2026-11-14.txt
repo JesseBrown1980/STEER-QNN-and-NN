@@ -1,0 +1,100 @@
+RUNBOOK REPLAY 2026-11-14 seat ACER-CLAUDE-FABLE52; repo D:/asolaria-absorb/ASOLARIA-UNIVERSE-SIMULATOR; commands exactly as RUNBOOK.md sections 1 and 2; V72 was running beside it
+NOTE first attempt used python -I -B (this seat's flags), which hides the players' own folder: 4 import failures caused by the seat, not by the tools; rerun below as the runbook writes it
+== 1 key
+1be91cb748b2b364c1f9f4dca1e7a89bcd8840e5e179e494dc611452be6556fd *key/prior3174.bin
+== 2 rime_fischer
+=== RIME FISCHER — play the sphere (Z/1000081Z)*, g=7 ===
+  sphere order 1,000,080 = nested rime-towers [16, 27, 5, 463]  (smooth -> playable)
+
+  target g^994185 -> played k=994185  reached=True
+  target g^711435 -> played k=711435  reached=True
+  target g^827781 -> played k=827781  reached=True
+  target g^969278 -> played k=969278  reached=True
+  target g^238602 -> played k=238602  reached=True
+
+  every target reached from the null center, rime-dimensionally: True
+  one Bobby Fischer per rime, cascading digit-differences (base q), then CRT:
+    rime   16: ~8 cascade-moves  (vs 16 brute) — the difference cascade
+    rime   27: ~6 cascade-moves  (vs 27 brute) — the difference cascade
+    rime    5: ~3 cascade-moves  (vs 5 brute) — the difference cascade
+    rime  463: ~22 cascade-moves  (vs 463 brute) — the difference cascade
+
+  GATE: this works because the order is SMOOTH (small prime towers).
+  A sphere with a large prime factor is UNPLAYABLE — the discrete-log wall.
+exit=0 seconds=0
+== 2 rime_run
+=== FREEZE, then ADDRESS on-demand (rime run) ===
+functions (frozen once): p=1000081, g=7, k=27   each object = 37,040 elements
+
+  FROZEN snapshot : 100,024 B  (100,000 rime-addresses + functions)
+  if MATERIALIZED : 11,112,000,000 B  (100,000 x 37,040 elements) -- what NOT to do
+  space saved by freezing (not materializing): 111,093x
+
+  PLAYED 200,000 on-demand addressings in 0.305s  = 0.66M elements/sec (Python; far faster in C)
+  each addressing = ONE modular exponentiation, O(1), never materializing the object
+  spot-checks byte-exact: True
+
+  PRINCIPLE: the system is FROZEN (sliced/saved), played AFTERWARD by the rime
+  Fischer on CPU. We observe from OUTSIDE the null — we never play it live, so we
+  never change it. Address-on-demand, not reconstruct. This is the GGUF pattern.
+exit=0 seconds=0
+== 2 rime_agents
+  GATE: cost is sqrt-scaled per prime tower; one large tower is the wall (Law 14).
+==========================================================================
+AGENT 2 — MTP (Law 24): frozen multi-token prediction  x1 / x3 / x27
+  direction 0 (hold)     : accuracy 1.0000  — the free center, costs nothing, says nothing
+  direction + (forward)  : x1 0.3667   x3 0.0767   x27 0.0000
+  direction - (backward) : x1 0.3775   (frozen on reversed time — real, ~symmetric)
+  GATE: lookahead accuracy DECAYS with depth — compounding error, DPI. A frozen
+  model predicts a fraction, never recreates unseen wholes (Laws 18/22).
+==========================================================================
+AGENT 3 — HRM (Law 25): two-rate hierarchy, slow picks the level, fast predicts
+  levels used: deep(27-ish ctx) 97%  mid(3-ish) 2%  base(rime floor) 0%
+  frozen hierarchical bpc on held-out enwik8 = 3.7454
+  GATE: the hierarchy ROUTES between frozen levels (+,0,-); it never dips below
+  the entropy of what the levels jointly know (Law 15/21).
+==========================================================================
+AGENT 4 — MCP (Law 26): stateless cells x CRT fan-in  (3 x 27-structured x rime)
+  cells: sphere(Z/163Z)* + sphere(Z/271Z)* + sphere(Z/379Z)*  (each 27|q-1)
+  address space M = 4,814,857   batch of 9 values round-tripped: byte-exact = True
+  GATE: cells are STATELESS (the SGRAM doctrine) — all knowledge is in the frozen
+  spheres; the coordinator only fans in. Addressing axis, ~0 bpc, never compression.
+==========================================================================
+ALL FOUR AGENTS PLAYED. Frozen, sliced, trime-signed, receipt-backed.
+exit=0 seconds=1
+== 2 rime_bpc
+  File "D:\asolaria-absorb\ASOLARIA-UNIVERSE-SIMULATOR\players\rime_bpc.py", line 67
+    print("  Two SCOPES, not two verdicts. ADDRESSING: bpc -> ~0 on generated structure
+          ^
+SyntaxError: unterminated string literal (detected at line 67)
+exit=1 seconds=0
+== 2 rime_27fischers
+
+  node    prime  color(rgb) glyph  trime -+0
+     0  1000081   (0, 1, 0)    16   --+
+     1  1000621 (-1, 0, -1)     3   0+0
+     2  1000999  (0, 0, -1)    12   ++0
+     3  1001107   (0, 1, 0)    16   --+
+     4  1001323   (1, 1, 0)    25   0-+
+     5  1001431  (1, 0, -1)    21   -+0
+     6  1001593  (-1, 1, 1)     8   +0-
+     7  1001809  (1, -1, 1)    20   -+-
+     8  1002241 (-1, -1, 0)     1   00+
+    13  1002619 (-1, -1, 0)     1   00+
+    26  1005913  (1, -1, 0)    19   -0+
+   ... (27 nodes total)
+
+  CRT recompose X from its 27 coordinates: byte-exact = True
+  the free 0 center: color (0,0,0) = glyph 13; g^0 = 1 on every sphere (Law 0)
+  2/3 rule (nodes 0,1 + center -> node 2): 16+3+center10 -> third 12 (true 12) exact=True
+
+  HONEST: 27 parallel ADDRESSING nodes over generated spheres (rate 1.0). Each
+  Bobby Fischer plays its frozen sphere in trinary; the free 0 is shared; the 2/3
+  closure reveals the third. This is the addressing fabric, not compression.
+exit=0 seconds=1
+== 3 the six, counted on the 27 trit glyphs (integers; this seat's reading of the operator statement of 2026-11-14: rotation of the three colours = the three, with the anti-verse = the six)
+ORBITS|group=ROTATION_ONLY|glyphs=27|orbits=11|sizes=1+1+1+3+3+3+3+3+3+3+3|json=0
+ORBITS|group=ROTATION_AND_ANTI|glyphs=27|orbits=6|sizes=1+2+6+6+6+6|json=0
+BOXES|by_first_trit|sizes=[9, 9, 9]|each_box=3x3|sum_of_each_box_per_axis=[(-9, 0, 0), (0, 0, 0), (9, 0, 0)]|json=0
+SIX|orbits_of_six=4|glyphs_in_them=24|each_sums_to=[(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]|a_glyph_in_one_is=1/6_of_its_orbit|json=0
+LADDER|27x3x3=243=3^5|json=0
