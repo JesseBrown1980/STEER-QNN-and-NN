@@ -1,0 +1,12 @@
+CR74RES|spec=specs/SPEC-CROWN-FULLSIZE-V74.hbp_and_ADDENDUM-1|run=github_actions_43654237138_(workflow_crown-fullsize.yml,_encode_job_132663022724,_decode_job_132663021458)|date=2026-11-15|rows_below=the_artifact_crown-rows_(id_14146352593)_byte_for_byte|first_decode_attempt=stopped_in_22_s_at_its_corpus_download_(an_11,971-byte_reply_in_place_of_the_zip),_no_codec_step_reached;_the_decode_job_was_started_again_on_the_operator_word_("restart_that_one")_and_read_the_same_encode_artifact_(sha256_ad91a072ebbd3db8bf925f7e1fe805caeb26b367f0b8a8715ed7495013397f29)|tag=MEASURED|json=0
+GATE|G1=PASS|json=0
+CORPUS|name=enwik9|bytes=1000000000|sha1=2996e86fb978f93cca8f566cc56998923e7fe581|sha256=159b85351e5f76e60cbe32e04c677847a9ecba3adc79addab6f4c6c7aa3744bc|first_100000000_sha256=2b49720ec4d78c3c9fabaee6e4179a5e997302b3a70029f30f2d582218c024a8|json=0
+GATE|G2=PASS|json=0
+GATE|G3=PASS|json=0
+PROBE|program=vc65_functions|k=10|N=1000000|payload=232585|comp_sha16=bd1b07074cdc2f20|restore=OK|json=0
+ENC|program=vc65_phase|k=10|N=1000000000|payload=170545862|seconds=7129|json=0
+STREAM|payload=170545862|sha256=c35dc7550332a891a391af01904c294d1b58579271e8b505654d738b5748fd22|sha16=c35dc7550332a891|match_keys_at_end=11361471|enc_wall=1:58:49|enc_max_rss_kb=11156860|runner=GitHub Actions 1000028938|cell=github_hosted_ubuntu_24.04|json=0
+DEC|program=vc65_phase|k=10|N=1000000000|payload=170545862|seconds=8222|json=0
+RESTORE|restore=OK|restored_sha256=159b85351e5f76e60cbe32e04c677847a9ecba3adc79addab6f4c6c7aa3744bc|cmp_with_enwik9=identical|dec_wall=2:17:02|dec_max_rss_kb=11148476|runner=GitHub Actions 1000029150|json=0
+CROWN|program=vc65_phase|k=10|N=1000000000|payload=170545862|total_with_decoder_20029=170565891|bpc_x10000=13645|total_with_decoder_20128=170565990|bpc_x10000_b=13645|total_with_decoder_22998=170568860|bpc_x10000_c=13646|restore=OK|json=0
+CR74TIME|dec_user_seconds=8211|dec_wall=2:17:02|dec_max_rss_kb=11148476|enc_wall=1:58:49|enc_max_rss_kb=11156860|dec_over_enc_seconds_x1000=1153|json=0
